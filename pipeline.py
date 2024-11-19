@@ -12,3 +12,6 @@ def clean_text(text: str) -> str:
     text = re.sub(r'\s+', ' ', text).strip()
 
     return text
+
+import secrets
+print(secrets.token_hex(32))
