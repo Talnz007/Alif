@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <title>ALIF</title>
+        <link rel="stylesheet" href="style.css">
+<title>Monthly Content Calendar</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #1a1a1a;
+        color: #ffffff;
+        display: flex;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .content-type, .platform {
+        background-color: #1a1a1a;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .content-type h3, .platform h3 {
+        color: #ffffff;
+        margin: 0;
+        font-size: 1em;
+        text-transform: uppercase;
+    }
+
+    .content-list, .platform-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 10px;
+        color: #cccccc;
+    }
+
+    .content-list li, .platform-list li {
+        padding: 5px 0;
+    }
+
+    .calendar-container {
+        flex-grow: 1;
+        padding: 20px;
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .calendar-header button {
+        background: #444;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .calendar-header button:hover {
+        background: #666;
+    }
+
+    .calendar-header h2 {
+        margin: 0;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+    }
+
+    .day, .date-cell {
+        text-align: center;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .day {
+        background-color: #333333;
+    }
+
+    .date-cell {
+        background-color: #1a1a1a;
+        border: 1px solid #333333;
+        min-height: 60px;
+        cursor: pointer;
+    }
+
+    .date-cell.today {
+        background-color: #4a90e2;
+        color: #ffffff;
+    }
+
+    .date-cell input {
+        width: 100%;
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .date-cell input:focus {
+        outline: none;
+    }
+</style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <img src="assets/ALIIFFF.png" alt="alif" class="alif-image">
+            <a href="Dashboard.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
+            <a href="messages.html" class="nav-link"><i class="fas fa-envelope"></i> Messages</a>
+            <a href="progress.html" class="nav-link"><i class="fas fa-chart-line"></i> Progress</a>
+            <a href="calendar.html" class="nav-link"><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> Settings</a>
+            <a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About us</a>
+            <a href="index.html" class="nav-link"><i class="fas fa-sign-out"></i> Logout</a>
+        </div>
+    </div>    
+
+<div class="calendar-container">
+    <div class="calendar-header">
+        <button onclick="changeMonth(-1)">Previous</button>
+        <h2 id="month-year"></h2>
+        <button onclick="changeMonth(1)">Next</button>
+    </div>
+    
+    <div class="grid">
+        <!-- Days of the week -->
+        <div class="day">Sun</div>
+        <div class="day">Mon</div>
+        <div class="day">Tue</div>
+        <div class="day">Wed</div>
+        <div class="day">Thu</div>
+        <div class="day">Fri</div>
+        <div class="day">Sat</div>
+
+        <!-- Calendar dates will be injected here by JavaScript -->
+        <div id="calendar-days"></div>
+    </div>
+</div>
+
+<script>
+    const monthYearDisplay = document.getElementById('month-year');
+    const calendarDays = document.getElementById('calendar-days');
+    let currentDate = new Date();
+
+    function renderCalendar(date) {
+        calendarDays.innerHTML = ''; // Clear previous dates
+
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        
+        // Set the month-year display
+        const monthNames = ["January", "February", "March", "April", "May", "June", 
+                            "July", "August", "September", "October", "November", "December"];
+        monthYearDisplay.textContent = `${monthNames[month]} ${year}`;
+
+        // Get first day and number of days in the month
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        // Add empty cells for days before the 1st of the month
+        for (let i = 0; i < firstDayOfMonth; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.classList.add('date-cell'); // Keeps grid layout consistent
+            calendarDays.appendChild(emptyCell);
+        }
+
+        // Populate days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateCell = document.createElement('div');
+            dateCell.classList.add('date-cell');
+            dateCell.innerHTML = `<p>${day}</p><input type="text" placeholder="Add Event">`;
+
+            // Highlight today’s date
+            const today = new Date();
+            if (day === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                dateCell.classList.add('today');
+            }
+
+            calendarDays.appendChild(dateCell);
+        }
+    }
+
+    function changeMonth(offset) {
+        currentDate.setMonth(currentDate.getMonth() + offset);
+        renderCalendar(currentDate);
+    }
+
+    // Render calendar for the current month
+    renderCalendar(currentDate);
+</script>
+
+</body>
+</html>

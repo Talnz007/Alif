@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>ALIF - Register</title>
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+ 
+    <div class="container">
+        <div class="left-section">
+            <img src="assets/ALIIFFF.png" alt="alif" class="alif-image">
+            <img src="assets/AI.png" alt="App Image" class="vector-image" />
+            <p>The Future of Learning</p>
+        </div>
+        <div class="form-section">
+            <div class="form-container">
+                <h3>Welcome to ALIF</h3>
+                <h2>Create Your Account</h2>
+                <form id="register-form">
+                    <label>Full Name</label>
+                    <input type="text" placeholder="Enter your full name" required>
+                    <label>Email</label>
+                    <input type="email" placeholder="Enter your email address" required>
+                    <label>Password</label>
+                    <input type="password" placeholder="Create a password" required>
+                    <label>Confirm Password</label>
+                    <input type="password" placeholder="Confirm your password" required>
+                    <button type="submit" class="submit-btn" onclick="navigateToLogin()">Register</button>
+                </form>
+                <p class="register-link">Already have an account? <span onclick="navigateToLogin()">Login here</span></p>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

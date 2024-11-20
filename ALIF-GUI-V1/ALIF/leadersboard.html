@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+        <title>ALIF</title>
+        <link rel="stylesheet" href="style.css">
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+            }
+    
+            body {
+                display: flex;
+                min-height: 100vh;
+                background-color: #f0f4f8;
+                color: #333;
+            }
+    
+            /* Main container */
+            .main-container {
+                display: flex;
+                width: 100%;
+            }
+    
+            /* Left section for leaderboard */
+            .leaderboard {
+                width: 70%;
+                padding: 20px;
+                background-color: #ffffff;
+                border-right: 1px solid #ddd;
+            }
+    
+            .leaderboard h2 {
+                font-size: 1.8em;
+                margin-bottom: 10px;
+            }
+    
+            .leaderboard table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+    
+            .leaderboard th, .leaderboard td {
+                padding: 15px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+    
+            .leaderboard th {
+                background-color: #f3f6fa;
+            }
+    
+            .leaderboard .rank {
+                font-size: 1.5em;
+                font-weight: bold;
+            }
+    
+            .leaderboard .user-info {
+                display: flex;
+                align-items: center;
+            }
+    
+            .leaderboard .user-info img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 10px;
+            }
+    
+            /* Right sidebar for user profile */
+            .sidebar {
+                width: 30%;
+                padding: 20px;
+                background-color: #f7f9fc;
+            }
+    
+            .sidebar .profile {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+    
+            .sidebar .profile img {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                margin-bottom: 10px;
+            }
+    
+            .sidebar .profile h3 {
+                margin-bottom: 5px;
+            }
+    
+            .sidebar .stats {
+                display: flex;
+                justify-content: space-around;
+                margin-bottom: 20px;
+                font-size: 1.1em;
+            }
+    
+            .chart-container {
+                width: 100%;
+                height: 200px;
+                background-color: #fff;
+                padding: 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+    
+            /* Bottom content */
+            .news {
+                background-color: #ffffff;
+                padding: 15px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+    
+            .news h4 {
+                margin-bottom: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main-container">
+            <div class="sidebar">
+                <img src="assets/ALIIFFF.png" alt="alif" class="alif-image">
+                <a href="Dashboard.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
+                <a href="messages.html" class="nav-link"><i class="fas fa-envelope"></i> Messages</a>
+                <a href="progress.html" class="nav-link"><i class="fas fa-chart-line"></i> Progress</a>
+                <a href="calendar.html" class="nav-link"><i class="fas fa-calendar-alt"></i> Calendar</a>
+                <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> Settings</a>
+                <a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About us</a>
+                <a href="index.html" class="nav-link"><i class="fas fa-sign-out"></i> Logout</a>
+            </div>
+            <div class="leadersboard">
+                <h2>Leaderboard</h2>
+        <table>
+            <tr>
+                <th>Rank</th>
+                <th>Person</th>
+                <th>Score</th>
+            </tr>
+            <tr>
+                <td class="rank">1</td>
+                <td class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User">
+                    <span>John Doe - Product Owner</span>
+                </td>
+                <td>162</td>
+            </tr>
+            <tr>
+                <td class="rank">2</td>
+                <td class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User">
+                    <span>Greg Horovitz - UX Designer</span>
+                </td>
+                <td>154</td>
+            </tr>
+            <tr>
+                <td class="rank">3</td>
+                <td class="user-info">
+                    <img src="https://via.placeholder.com/40" alt="User">
+                    <span>Kate Billman - Account Executive</span>
+                </td>
+                <td>138</td>
+            </tr>
+            <!-- Add more rows as needed -->
+        </table>
+    </div>
+
+    <!-- Sidebar Section -->
+    <div class="sidebar">
+        <div class="profile">
+            <img src="https://via.placeholder.com/80" alt="Profile Picture">
+            <h3>Macy Doe</h3>
+            <p>Product Owner @ Microsoft</p>
+            <a href="#">Send Initial</a>
+        </div>
+
+        <div class="stats">
+            <div>
+                <p><strong>24</strong></p>
+                <p>Ranking</p>
+            </div>
+            <div>
+                <p><strong>365</strong></p>
+                <p>Deals</p>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <!-- Placeholder for chart - you can integrate a real chart with Chart.js or any chart library -->
+            <p style="text-align:center; font-size:1.2em; color: #aaa;">Chart Placeholder</p>
+        </div>
+
+        <div class="news">
+            <h4>News</h4>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vitae diam metus.</p>
+        </div>
+  
+            </div>
+        </div>
+    </body>
