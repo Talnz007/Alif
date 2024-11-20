@@ -21,7 +21,7 @@ class TextSummarizerGemini:
         Initialize the TextSummarizer with Gemini API
         """
         # Configure Gemini API with built-in API key
-        api_key = "AIzaSyB14BFp819sG2hFg-peKfeFc22_t1b7mXc"
+        api_key = "YOUR API KEY HERE"
         genai.configure(api_key=api_key)
         
         # Configure model parameters
