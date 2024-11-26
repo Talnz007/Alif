@@ -1,5 +1,6 @@
 from supabase import create_client, Client
 from app.core.config import settings
+import atexit
 
 class DatabaseConnection:
     _instance = None
@@ -16,6 +17,14 @@ class DatabaseConnection:
 
     def get_client(self) -> Client:
         return self.client
+
+    def close_connection(self):
+        if DatabaseConnection._instance:
+            DatabaseConnection._instance.client.close()
+
+
+if not settings.SUPABASE_URL or not settings.SUPABASE_KEY:
+    raise ValueError("Missing critical environment variables: SUPABASE_URL or SUPABASE_KEY")
 
 
 supabase_db = DatabaseConnection().get_client()

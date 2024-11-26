@@ -1,13 +1,21 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException,APIRouter
 from pydantic import BaseModel
-import logging
+from app.core.logging import app_logger
 import google.generativeai as genai
 import re
 from typing import Optional
+import os
+from dotenv import load_dotenv
+from app.core.config import settings
+import logging
+
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+app = FastAPI()
 
 class TextInput(BaseModel):
     text: str
@@ -21,9 +29,8 @@ class TextSummarizerGemini:
         Initialize the TextSummarizer with Gemini API
         """
         # Configure Gemini API with built-in API key
-        api_key = "YOUR_API_GOES_HERE"
-        genai.configure(api_key=api_key)
-        
+        genai.configure(api_key=settings.GEMINI_KEY)
+
         # Configure model parameters
         self.generation_config = {
             "temperature": 0.7,
@@ -31,14 +38,14 @@ class TextSummarizerGemini:
             "top_k": 40,
             "max_output_tokens": 2048,
         }
-        
+
         self.safety_settings = {
             genai.types.HarmCategory.HARM_CATEGORY_HARASSMENT: genai.types.HarmBlockThreshold.BLOCK_NONE,
             genai.types.HarmCategory.HARM_CATEGORY_HATE_SPEECH: genai.types.HarmBlockThreshold.BLOCK_NONE,
             genai.types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: genai.types.HarmBlockThreshold.BLOCK_NONE,
             genai.types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: genai.types.HarmBlockThreshold.BLOCK_NONE,
         }
-        
+
         # Initialize the model
         self.model = genai.GenerativeModel(
             model_name="gemini-pro",
@@ -48,83 +55,97 @@ class TextSummarizerGemini:
 
     def _process_text(self, text: str) -> str:
         """
-        Process the input text to convert it into a single line
-        Args:
-            text (str): Input text
-        Returns:
-            str: Processed single-line text
+        Process the input text to convert it into a JSON-compatible single line
         """
-        # Remove extra whitespace and newlines
-        processed_text = re.sub(r'\s+', ' ', text.strip())
-        # Remove any special characters that might cause issues
-        processed_text = re.sub(r'[^\w\s.,!?;:-]', '', processed_text)
+        processed_text = re.sub(r'\s+', ' ', text.strip())  # Replace newlines and extra spaces
+        processed_text = processed_text.replace('"', '\\"')  # Escape double quotes
         return processed_text
+
+    def _split_text(self, text: str, max_length: int = 2000):
+        """
+        Split the text into smaller chunks if it exceeds the max length
+        """
+        words = text.split()
+        chunks = []
+        current_chunk = []
+
+        for word in words:
+            current_chunk.append(word)
+            if len(" ".join(current_chunk)) > max_length:
+                chunks.append(" ".join(current_chunk[:-1]))
+                current_chunk = [word]
+
+        if current_chunk:
+            chunks.append(" ".join(current_chunk))
+
+        return chunks
 
     async def summarize_text(self, text: str) -> str:
         """
         Summarize the input text using the Gemini API
-        Args:
-            text (str): Text to summarize
-        Returns:
-            str: Summarized text
         """
         try:
-            # Process the text into a single line
-            processed_text = self._process_text(text)
-            logger.info("Text processed into single line format")
-            
-            # Define the prompt for summarization
-            prompt = (
-                "Summarize the following text into key points and a crux:\n\n"
-                f"{processed_text}\n\n"
-                "Provide the output in the following format:\n"
-                "Key Points:\n- Point 1\n- Point 2\n- ...\n\n"
-                "Crux:\n- A single concise statement summarizing the text."
-            )
-            
-            logger.info("Sending processed text to Gemini API for summarization...")
-            
-            # Start chat with the Gemini model
-            chat = self.model.start_chat(history=[])
-            
-            # Send the prompt to Gemini
-            response = await chat.send_message_async(prompt)
-            
-            return response.text
-            
+            # Process the text into chunks if it's too long
+            chunks = self._split_text(text)
+            summaries = []
+
+            for chunk in chunks:
+                processed_text = self._process_text(chunk)
+                logger.info("Text processed into JSON-compatible format")
+
+                # Define the prompt for summarization
+                prompt = (
+                    "Summarize the following text into key points and a crux:\n\n"
+                    f"{processed_text}\n\n"
+                    "Provide the output in the following format:\n"
+                    "Key Points:\n- Point 1\n- Point 2\n- ...\n\n"
+                    "Crux:\n- A single concise statement summarizing the text."
+                )
+
+                logger.info("Sending processed text to Gemini API for summarization...")
+
+                # Start chat with the Gemini model
+                chat = self.model.start_chat(history=[])
+
+                # Send the prompt to Gemini
+                response = await chat.send_message_async(prompt)
+
+                summaries.append(response.text)
+
+            # Combine summaries from all chunks
+            return "\n".join(summaries)
+
         except Exception as e:
             logger.error(f"Error during text summarization: {e}")
             raise HTTPException(status_code=500, detail=str(e))
 
-# Initialize FastAPI app
-app = FastAPI(
-    title="Text Summarizer API",
-    description="An API that preprocesses and summarizes text using Google's Gemini AI",
-    version="1.0.0"
-)
+# Instantiate the text summarizer
+router = APIRouter()
+text_summarizer = TextSummarizerGemini()
 
-# Create a single instance of the summarizer to be reused
-summarizer = TextSummarizerGemini()
 
-@app.post("/summarize/", response_model=SummaryResponse)
-async def summarize_text(text_input: TextInput):
+
+@router.post("/test-processing/")
+async def test_processing(input_data: TextInput):
     """
-    Endpoint to summarize text
+    API endpoint for testing text processing
     """
     try:
-        summary = await summarizer.summarize_text(text_input.text)
-        return SummaryResponse(summary=summary)
+        processed_text = text_summarizer._process_text(input_data.text)
+        return {"processed_text": processed_text}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Error during text processing: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred during text processing")
 
-# Optional: Add a health check endpoint
-@app.get("/health")
-async def health_check():
+@router.post("/summarize/", response_model=SummaryResponse)
+async def summarize(input_data: TextInput):
     """
-    Endpoint to check if the API is running
+    API endpoint for summarizing text
     """
-    return {"status": "healthy"}
+    try:
+        summary = await TextSummarizerGemini.summarize_text(input_data.text)
+        return {"summary": summary}
+    except Exception as e:
+        app_logger.error(f"Error during summarization: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred during summarization")
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)

@@ -9,12 +9,15 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Alif"
     API_V1_STR: str = "/api/v1"
 
+    GEMINI_KEY: str = os.getenv("GEMINI_KEY", "")
+
     SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
     SUPABASE_KEY: str = os.getenv("SUPABASE_KEY", "")
 
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key")
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "JLIng3lYVkuRmLIcwfI51DtxSXQdxNFrxqAZrBkCSb8")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
 
 
 class Config:
