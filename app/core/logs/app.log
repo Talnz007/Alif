@@ -36,3 +36,44 @@
 2024-11-25 01:42:53,092 - app_logger - ERROR - HTTP Exception: 400: Username or email already registered (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
 2024-11-25 01:44:34,674 - app_logger - ERROR - HTTP Exception: Username or email already registered (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
 2024-11-25 01:44:34,674 - app_logger - ERROR - HTTP Exception: 400: Username or email already registered (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 16:39:39,659 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 16:39:39,665 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 16:43:41,088 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 16:43:41,088 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 16:45:11,090 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 16:45:11,091 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 16:56:12,556 - app_logger - ERROR - Error during summarization: TextSummarizerGemini.summarize_text() missing 1 required positional argument: 'text' - /home/talnz/PythonProjects/Alif/app/endpoints/text_sumarization.py:149
+2024-11-27 16:56:37,516 - app_logger - ERROR - Error during summarization: TextSummarizerGemini.summarize_text() missing 1 required positional argument: 'text' - /home/talnz/PythonProjects/Alif/app/endpoints/text_sumarization.py:149
+2024-11-27 16:57:38,632 - app_logger - ERROR - Error during summarization: TextSummarizerGemini.summarize_text() missing 1 required positional argument: 'text' - /home/talnz/PythonProjects/Alif/app/endpoints/text_sumarization.py:149
+2024-11-27 17:06:29,820 - app_logger - ERROR - Error during summarization: TextSummarizerGemini.summarize_text() missing 1 required positional argument: 'text' - /home/talnz/PythonProjects/Alif/app/endpoints/text_sumarization.py:149
+2024-11-27 17:53:54,524 - app_logger - ERROR - HTTP Exception: hash could not be identified (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 17:54:17,278 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 17:54:17,278 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 17:54:36,154 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 17:54:36,155 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 17:54:49,552 - app_logger - ERROR - HTTP Exception: hash could not be identified (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 17:59:59,374 - app_logger - ERROR - HTTP Exception: hash could not be identified (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 18:01:46,925 - app_logger - ERROR - HTTP Exception: Username or email already registered (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 18:01:46,925 - app_logger - ERROR - HTTP Exception: 400: Username or email already registered (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 19:54:16,230 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 19:54:16,237 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 19:54:38,417 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 19:54:38,418 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 19:54:44,010 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 19:54:44,010 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 19:56:58,624 - app_logger - ERROR - HTTP Exception: Username or email already registered (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-11-27 19:56:58,624 - app_logger - ERROR - HTTP Exception: 400: Username or email already registered (Status Code: 400) - /home/talnz/PythonProjects/Alif/app/core/exception.py:7
+2024-12-02 14:25:22,301 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:25:22,323 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:25:44,746 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:25:44,747 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:27:15,604 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:27:15,604 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:32:35,393 - app_logger - ERROR - HTTP Exception: hash could not be identified (Status Code: 400) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:33:31,343 - app_logger - ERROR - HTTP Exception: hash could not be identified (Status Code: 400) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:55:46,291 - app_logger - ERROR - HTTP Exception: Username or email already registered (Status Code: 400) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:55:46,291 - app_logger - ERROR - HTTP Exception: 400: Username or email already registered (Status Code: 400) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:56:32,311 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:56:32,312 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:59:47,853 - app_logger - ERROR - HTTP Exception: Incorrect username or password (Status Code: 401) - D:\PythonProjects\Alif\app\core\exception.py:7
+2024-12-02 14:59:47,854 - app_logger - ERROR - HTTP Exception: 401: Incorrect username or password (Status Code: 400) - D:\PythonProjects\Alif\app\core\exception.py:7

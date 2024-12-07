@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from app.core.logging import app_logger
+from app.core.app_logging import app_logger
 
 class CustomHTTPException(HTTPException):
     def __init__(self, detail: str, status_code: int = 400):

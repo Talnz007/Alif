@@ -1,7 +1,7 @@
 from typing import List, Optional
 from app.core.exception import CustomHTTPException
 from app.database.connection import supabase_db
-from app.core.logging import app_logger
+from app.core.app_logging import app_logger
 
 class BadgeService:
     def __init__(self):

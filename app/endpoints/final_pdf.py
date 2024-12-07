@@ -54,7 +54,7 @@ class PDFAnalyzerGemini:
         )
 
         self.analysis_prompt = """
-        Analyze the provided text from the PDF and explain the key concepts clearly and concisely. 
+        Analyze the provi   ded text from the PDF and explain the key concepts clearly and concisely. 
         Please avoid repeating or regurgitating the original text. Instead, provide a simplified 
         or paraphrased explanation of the main points in a manner that is easy to understand. 
         After explaining the concepts, provide 3 reflective questions related to the material to assess understanding. 

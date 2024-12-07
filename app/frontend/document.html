@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>ALIF - Chat about Document</title>
+    <link rel="icon" href="assets/ALIIFFF.png" type="image/png">
+    <link rel="stylesheet" href="chatbot.css">
+</head>
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <img src="assets/ALIIFFF.png" alt="alif" class="alif-image">
+            <a href="Dashboard.html"><i class="fas fa-home"></i> Home</a>
+            <a href="messages.html"><i class="fas fa-envelope"></i> Messages</a>
+            <a href="progress.html"><i class="fas fa-chart-line"></i> Progress</a>
+            <a href="calendar.html"><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            <a href="about.html"><i class="fas fa-info-circle"></i> About Us</a>
+            <a href="index.html"><i class="fas fa-sign-out"></i> Logout</a>
+        </div>
+        <div class="upload-document-container">
+            <h2>Upload Document</h2>
+
+            <!-- Drag and Drop Area -->
+            <div class="drop-zone" id="document-drop-zone" onclick="document.getElementById('document-upload').click();">
+                <p>Drag & Drop your document here, or <span>click to upload</span></p>
+                <input type="file" id="document-upload" accept=".pdf" onchange="handleDocumentUpload(event)" style="display: none;">
+            </div>
+
+            <!-- Display Document Info -->
+            <div id="document-info" class="document-info">
+                <p id="document-details">No document uploaded. Only upload PDF documents.</p>
+            </div>
+
+            <!-- Start Summarization Section -->
+            <div class="summarization-section">
+                <button id="start-summarization" onclick="startSummarization()" disabled>Start Summarization</button>
+            </div>
+
+            <!-- Chatbot Interface -->
+            <div class="chat-container">
+                <h3>Chat about the Document</h3>
+                <div id="document-chat-messages" class="chat-messages"></div>
+                <input type="text" id="document-chat-input" placeholder="Type your question here..." onkeypress="handleDocumentChat(event)">
+                <button onclick="sendDocumentChat()">Send</button>
+            </div>
+        </div>
+        <script src="doc_sum.js"></script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,255 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: 'Onest', sans-serif; /* Minimalist font */
+    font-size: 14px;
+    color: #2e2e2e; /* Neutral dark gray */
+    background-color: #f5f5f5; /* Soft light gray */
+}
+
+h2, h3 {
+    margin: 0 0 12px;
+    font-weight: 500; /* Balanced font weight */
+    color: #333;
+}
+
+/* Main Container */
+.main-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 240px;
+    background-color: #ffffff; /* White sidebar */
+    border-right: 1px solid #ddd; /* Subtle divider */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Light shadow */
+}
+
+.sidebar img.alif-image {
+    width: 80%;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.sidebar a {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 16px;
+    font-size: 14px;
+    color: #555; /* Neutral text */
+    text-decoration: none;
+    border-radius: 4px;
+    margin: 4px 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sidebar a i {
+    margin-right: 12px;
+}
+
+.sidebar a:hover {
+    background-color: #f0f0f0; /* Soft hover effect */
+    color: #333;
+}
+
+/* Upload Audio Container */
+.upload-audio-container {
+    flex: 1;
+    padding: 20px 40px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Space between sections */
+    background-color: #fff;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Upload Section */
+.upload-section {
+    display: flex;
+    gap: 12px;
+}
+
+.upload-section button {
+    background-color: #2d9cdb; /* Light blue */
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.upload-section button:hover {
+    background-color: #1d7cb6;
+}
+
+.upload-section button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Audio Information */
+.audio-info {
+    font-size: 13px;
+    color: #666;
+}
+
+.audio-info p {
+    margin: 8px 0;
+}
+
+/* Transcription Section */
+#transcription-result {
+    font-size: 14px;
+    color: #555;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+/* Chat Section */
+.chat-container {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 16px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chat-container h3 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chat-messages .message {
+    padding: 10px 14px;
+    border-radius: 8px;
+    max-width: 70%;
+    font-size: 14px;
+    display: inline-block;
+    margin: 6px 0;
+    word-wrap: break-word;
+}
+
+
+.chat-messages .message.user {
+    background-color: #2d9cdb; /* Blue for user */
+    color: white;
+    align-self: flex-end; /* User messages on the right */
+}
+
+.chat-messages .message.bot {
+    background-color: #f8f8f8; /* Light gray for bot */
+    color: #333;
+    align-self: flex-start; /* Bot messages on the left */
+}
+
+.chat-container input[type="text"] {
+    flex: 1;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+
+.chat-container button {
+    padding: 10px 16px;
+    font-size: 14px;
+    background-color: #2d9cdb;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+}
+
+.chat-container button:hover {
+    background-color: #1d7cb6;
+}
+
+/* Progress Bar */
+.progress-container {
+    margin-top: 16px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    height: 8px;
+}
+
+.progress-bar {
+    width: 0;
+    height: 100%;
+    background-color: #2d9cdb;
+    transition: width 0.2s ease;
+}
+
+/* Recommendations Section */
+.recommendations-container {
+    padding: 16px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.recommendations-container h3 {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+}
+
+.recommendations-container p {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Success Message */
+.success-message {
+    padding: 12px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #2ecc71; /* Green for success */
+    border-radius: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .upload-audio-container {
+        padding: 16px;
+    }
+}
+

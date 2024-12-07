@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <title>ALIF</title>
+        <link rel="stylesheet" href="style.css">
+        
+    </head>
+    <body>
+        <div class="main-container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <img src="assets/ALIIFFF.png" alt="alif" class="alif-image">
+                <a href="Dashboard.html" class="nav-link"><i class="fas fa-home"></i> Home</a>
+                <a href="messages.html" class="nav-link"><i class="fas fa-envelope"></i> Messages</a>
+                <a href="progress.html" class="nav-link"><i class="fas fa-chart-line"></i> Progress</a>
+                <a href="calendar.html" class="nav-link"><i class="fas fa-calendar-alt"></i> Calendar</a>
+                <a href="settings.html" class="nav-link"><i class="fas fa-cog"></i> Settings</a>
+                <a href="about.html" class="nav-link"><i class="fas fa-info-circle"></i> About us</a>
+                <a href="index.html" class="nav-link"><i class="fas fa-sign-out"></i> Logout</a>
+            </div>
+        
+            <!-- Dashboard Content -->
+            <div class="dashboard">
+                <div class="welcome-section">
+                    <h1>Welcome</h1>
+                </div>
+                
+                <hr class="divider">
+                <!-- Upper Section with Key Features -->
+                <div class="features-grid top-section">
+                    <div class="feature-card" onclick="navigateTo('text-summarization')">
+                        <img src="assets/text.svg" alt="Text Summarization Icon" class="feature-card-img">
+                        <h2>Text Summarization</h2>
+                        <p>Summarize your study materials quickly.</p>
+                    </div>
+
+                    <div class="feature-card" onclick="navigateTo('upload-audio')">
+                        <img src="assets/a.svg" alt="Upload Audio Icon" class="feature-card-img" />
+                        <h2>Upload Audio</h2>
+                        <p>Chat about your audio.</p>
+                    </div>
+
+                    <div class="feature-card" onclick="navigateTo('upload-document')">
+                        <img src="assets/doc.svg" alt="Upload Document Icon" class="feature-card-img" />
+                        <h2>Upload Document</h2>
+                        <p>Chat with your document.</p>
+                    </div>
+                </div>
+
+        
+                <!-- Divider Line -->
+                <hr class="divider">
+        
+                <!-- Lower Section with Additional Features -->
+                <div class="features-grid bottom-section">
+                    <div class="feature-card" onclick="navigateTo('badges')">
+                        <img src="assets/b.svg" alt="Badge Icon" class="feature-card-img" />
+                        <h2>Badges</h2>
+                        <p>Earn badges and show off.</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateTo('study-streak')">
+                        <img src="assets/study.svg" alt="streak Icon" class="feature-card-img" />
+                        <h2>Study Streak Tracking</h2>
+                        <p>Maintain your study streaks and boost productivity.</p>
+                    </div>
+                    <div class="feature-card" onclick="navigateTo('leadersboard')">
+                        <img src="assets/leader.svg" alt="LeaderBoard Icon" class="feature-card-img" />
+                        <h2>LeaderBoard</h2>
+                        <p>See your rank here.</p>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+        
+        <script src="script.js"></script>        
+    </body>
+</html>

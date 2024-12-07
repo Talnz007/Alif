@@ -2,7 +2,7 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 from app.database.connection import supabase_db
 from app.core.exception import CustomHTTPException
-from app.core.logging import app_logger
+from app.core.app_logging import app_logger
 from app.models.activity import UserActivityLog, ActivityBase
 
 

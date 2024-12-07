@@ -76,12 +76,14 @@ async def register(user_data: UserCreate) -> Any:
 
 
 @router.post("/login", response_model=UserResponse)
-async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     try:
-        # Get user
-        user_result = supabase_db.table('users').select("*").eq(
-            "username", form_data.username
-        ).execute()
+        print(f"Received username: {form_data.username}")
+        print(f"Received password: {form_data.password}")
+
+        # Fetch user from the database
+        user_result = supabase_db.table('users').select("*").eq("username", form_data.username).execute()
+        print(f"User query result: {user_result.data}")
 
         if not user_result.data:
             raise CustomHTTPException(
@@ -91,7 +93,9 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
 
         user = user_result.data[0]
 
+        # Verify password
         if not verify_password(form_data.password, user["password"]):
+            print("Password verification failed")  # Log password verification issue
             raise CustomHTTPException(
                 "Incorrect username or password",
                 status_code=status.HTTP_401_UNAUTHORIZED
@@ -102,8 +106,9 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
         access_token = create_access_token(
             data={"sub": user["username"]}, expires_delta=access_token_expires
         )
+        print(f"Generated access token: {access_token}")
 
-        # Log activity
+        # Log user activity
         await log_user_activity(user['id'], "user_login")
 
         return {
@@ -113,7 +118,9 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()) -> Any:
         }
 
     except Exception as e:
+        print(f"Login error: {e}")  # Log any exceptions
         raise CustomHTTPException(str(e))
+
 
 
 async def log_user_activity(user_id: str, activity_type: str) -> None:

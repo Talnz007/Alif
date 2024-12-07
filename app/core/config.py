@@ -8,7 +8,7 @@ load_dotenv()
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Alif"
     API_V1_STR: str = "/api/v1"
-
+    LLAMA_KEY: str = os.getenv("LLAMA_KEY", "")
     GEMINI_KEY: str = os.getenv("GEMINI_KEY", "")
 
     SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")

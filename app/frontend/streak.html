@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <title>ALIF - Streak</title>
+    <style>
+
+        .section {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .section h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .view-all {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.9em;
+            color: #8da2b7;
+            cursor: pointer;
+        }
+
+        /* Bar Chart */
+        .chart-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 150px;
+            margin-top: 20px;
+        }
+
+        .chart-bar div {
+            width: 12%;
+            height: 100px;
+            background: linear-gradient(135deg, #7b68ee 0%, #4e4dff 100%);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .chart-bar div.active {
+            background: #8d4de8;
+        }
+
+        .chart-bar div span {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            color: #8da2b7;
+        }
+
+        .chart-bar label {
+            display: block;
+            text-align: center;
+            font-size: 0.9em;
+            margin-top: 5px;
+            color: #8da2b7;
+        }
+
+        /* Circular Chart */
+        .circular-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 180px;
+        }
+
+        .circular-chart .circle {
+            background: conic-gradient(#7b68ee 0% 40%, #a8c5ff 40% 80%, #56d4c7 80% 100%);
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .circular-chart .circle::before {
+            content: "$80h";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2em;
+            color: #fff;
+        }
+
+        .metrics {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .metric-item {
+            font-size: 0.9em;
+            color: #8da2b7;
+        }
+
+        .metric-item strong {
+            display: block;
+            color: #fff;
+        }
+
+        /* Compact Stats */
+        .stat {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .stat-sub {
+            font-size: 0.9em;
+            color: #8da2b7;
+            margin-top: 5px;
+        }
+
+        .stat-change {
+            font-size: 0.9em;
+            margin-top: 5px;
+            color: #4e4dff;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <img src="assets/ALIIFFF.png" alt="alif" class="alif-image">
+            <a href="Dashboard.html"><i class="fas fa-home"></i> Home</a>
+            <a href="messages.html"><i class="fas fa-envelope"></i> Messages</a>
+            <a href="progress.html"><i class="fas fa-chart-line"></i> Progress</a>
+            <a href="calendar.html"><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            <a href="about.html"><i class="fas fa-info-circle"></i>About us</a>
+            <a href="index.html"><i class="fas fa-sign-out"></i>Logout</a>
+        </div>
+
+
+        <div class="section">
+            <h3>Study Streak</h3>
+            <div class="view-all">View All</div>
+            <div class="chart-bar">
+                <div style="height: 120px;"><span>25h</span></div>
+                <div style="height: 80px;"><span>18h</span></div>
+                <div style="height: 90px;"><span>20h</span></div>
+                <div class="active" style="height: 130px;"><span>30h</span></div>
+                <div style="height: 70px;"><span>15h</span></div>
+                <div style="height: 95px;"><span>22h</span></div>
+                <div style="height: 100px;"><span>24h</span></div>
+            </div>
+            <div class="metrics">
+                <label>Mon</label>
+                <label>Tue</label>
+                <label>Wed</label>
+                <label>Thu</label>
+                <label>Fri</label>
+                <label>Sat</label>
+                <label>Sun</label>
+            </div>
+        </div>
+
+        <!-- Study Time Section -->
+        <div class="section">
+            <h3>Study Time</h3>
+            <div class="view-all">View All</div>
+            <div class="circular-chart">
+                <div class="circle"></div>
+            </div>
+            <div class="metrics">
+                <div class="metric-item"><strong>50h</strong>Reading</div>
+                <div class="metric-item"><strong>20h</strong>Writing</div>
+                <div class="metric-item"><strong>10h</strong>Projects</div>
+            </div>
+        </div>
+
+        <!-- Income Section (for "Current Study Goal") -->
+        <div class="section">
+            <h3>Current Study Goal</h3>
+            <p class="stat">80h</p>
+            <p class="stat-sub">Total Goal</p>
+            <p class="stat-change">+15%</p>
+        </div>
+
+        <!-- Expense Section (for "Last Week's Study") -->
+        <div class="section">
+            <h3>Last Week's Study</h3>
+            <p class="stat">40h</p>
+            <p class="stat-sub">Total Study Time</p>
+            <p class="stat-change">+9%</p>
+        </div>
+    </div>
+</body>
+</html>

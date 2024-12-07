@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="audio-bot.css">
+    <title>ALIF - Chat about Audio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <img src="assets/ALIIFFF.png" alt="ALIF Logo" class="alif-image">
+            <a href="Dashboard.html"><i class="fas fa-home"></i> Home</a>
+            <a href="messages.html"><i class="fas fa-envelope"></i> Messages</a>
+            <a href="progress.html"><i class="fas fa-chart-line"></i> Progress</a>
+            <a href="calendar.html"><i class="fas fa-calendar-alt"></i> Calendar</a>
+            <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+            <a href="about.html"><i class="fas fa-info-circle"></i> About Us</a>
+            <a href="index.html"><i class="fas fa-sign-out"></i> Logout</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="upload-audio-container">
+            <h2>Upload Audio</h2>
+
+            <!-- Audio Upload Section -->
+            <div class="upload-section">
+                <input
+                    type="file"
+                    id="audio-upload"
+                    accept=".wav, .mp3, .aac, .flac, .aiff"
+                    hidden
+                    onchange="handleAudioUpload(event)"
+                />
+                <button onclick="document.getElementById('audio-upload').click();">Upload Audio</button>
+                <button id="start-transcription" onclick="uploadAudio()" disabled>Start Transcription</button>
+                <button id="download-pdf" style="display: none;">Download Transcription as PDF</button>
+            </div>
+
+            <!-- Audio Information -->
+            <div id="audio-info" class="audio-info">
+                <p id="audio-details">No audio uploaded.</p>
+                <p>Only upload WAV, MP3, and AIFF files.</p>
+                <audio id="audio-player" controls style="display: none;"></audio>
+            </div>
+
+            <!-- Transcription Results -->
+            <div id="transcription-result">
+                <p>No transcription yet.</p>
+            </div>
+
+            <!-- Chat Section -->
+            <div class="chat-container">
+                <h3>Chat about the Audio</h3>
+                <div id="chat-messages" class="chat-messages"></div>
+                <input type="text" id="chat-input" placeholder="Ask me something about the audio...">
+                <button onclick="sendChat()">Send</button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+
+            <!-- YouTube Recommendations Section -->
+            <div id="recommendations" class="recommendations-container">
+                <h3>Recommended Watch</h3>
+                <div id="recommendations-list">
+                    <p>No recommendations available yet.</p>
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <p class="success-message" id="success-message" style="display: none;">
+                Audio uploaded successfully!
+            </p>
+        </div>
+    </div>
+
+    <script src="audio_transcription.js"></script>
+    <script src="audio_progress.js"></script>
+</body>
+</html>
