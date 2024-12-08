@@ -5,7 +5,7 @@ from app.core.config import settings
 import requests
 
 
-YOUTUBE_API_KEY = 'AIzaSyCSzb408fWi5aS5nl9ZA2IqgsmMTP_9QVU'
+YOUTUBE_API_KEY = 'YOUTUBE_API_KEY'
 YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/search'
 
 # Initialize NVIDIA Llama client
