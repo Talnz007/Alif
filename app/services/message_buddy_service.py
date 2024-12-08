@@ -4,8 +4,8 @@ from fastapi import HTTPException, UploadFile
 from io import BytesIO
 
 # NVIDIA API details
-INVOKE_URL = "https://ai.api.nvidia.com/v1/gr/meta/llama-3.2-90b-vision-instruct/chat/completions"
-API_KEY = "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"  # Use your actual API key
+INVOKE_URL = "NVIDIA API url"
+API_KEY = "Use your actual API key"  # Use your actual API key
 
 # Maximum allowable image size (in base64 format)
 MAX_IMAGE_SIZE = 180_000
