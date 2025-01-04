@@ -3,7 +3,7 @@
 **Alif** is an innovative AI-driven tutor app designed to provide personalized and interactive learning experiences. With advanced AI technologies, it helps users enhance their knowledge through voice-based assistance, tailored feedback, and smart progress tracking.
 
 ---
-
+# Architecture
 ![Alt Text](https://github.com/Talnz007/Alif/blob/master/ar.png?raw=true)
 
 
