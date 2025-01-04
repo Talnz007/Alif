@@ -4,6 +4,8 @@
 
 ---
 
+![Alt Text](.app/frontend/assets)
+
 ## Features
 
 ### 1. **Personalized Learning**
