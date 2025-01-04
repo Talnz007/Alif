@@ -4,7 +4,7 @@
 
 ---
 
-![Alt Text](https://github.com/Talnz007/Alif/blob/master/app/frontend/assets/ALIIFFF.png?raw=true)
+![Alt Text](https://github.com/Talnz007/Alif/ar.png?raw=true)
 
 
 ## Features
