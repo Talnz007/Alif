@@ -47,7 +47,7 @@
 ### AI Integration:
 - **Google Gemini API** for advanced AI capabilities.
 - **OpenAI Whisper** for voice recognition and processing.
-- **Llama AI** for intelligent content generation and natural language understanding.
+- **Llama 3.2(405 B)** for intelligent content generation and natural language understanding.
 
 ### Frontend:
 - **HTML/CSS** and **Vanilla JavaScript** for a clean and responsive user interface.
