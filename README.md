@@ -4,7 +4,7 @@
 
 ---
 
-![Alt Text](.app/frontend/assets)
+![Alt Text]([.app/frontend/assets](https://github.com/Talnz007/Alif/blob/master/app/frontend/assets/ALIIFFF.png?raw=true))
 
 ## Features
 
