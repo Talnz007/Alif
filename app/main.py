@@ -3,18 +3,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 import time
-from app.core.config import settings
-from app.core.exception import CustomHTTPException
-from app.endpoints import auth, Transcription
-from app.endpoints.Text_sumarization import router as text_summarizer
-from app.endpoints.Text_sumarization import TextSummarizerGemini,TextInput,SummaryResponse
-from app.core.app_logging import app_logger
+from master.app.core.config import settings
+from master.app.core.exception import CustomHTTPException
+from master.app.endpoints import auth, transcription
+from master.app.endpoints.text_sumarization import router as text_summarizer
+from master.app.endpoints.text_sumarization import TextSummarizerGemini,TextInput,SummaryResponse
+from master.app.core.app_logging import app_logger
 import re
 from fastapi import FastAPI
-from app.endpoints.final_pdf import router as pdf_router
-from app.endpoints.auth import router as auth_router
-from app.services.studdy_buddy_service import router as study_router
-from app.endpoints.message_buddy import router as message_router
+from master.app.endpoints.final_pdf import analyze_pdf
+from master.app.endpoints.auth import router as auth_router
+from master.app.services.studdy_buddy_service import router as study_router
+from master.app.endpoints.message_buddy import router as message_router
+from master.app.endpoints import chatbot
+
 
 
 # Initialize FastAPI app
@@ -66,11 +68,12 @@ async def custom_exception_handler(request: Request, exc: CustomHTTPException):
 
 # Include routers (with API versioning)
 app.include_router(auth.router, prefix=settings.API_V1_STR)
-app.include_router(Transcription.router, prefix=settings.API_V1_STR)
-app.include_router(pdf_router, prefix=settings.API_V1_STR)
+app.include_router(transcription.router, prefix=settings.API_V1_STR)
+app.include_router(analyze_pdf, prefix=settings.API_V1_STR)
 app.include_router(text_summarizer, prefix=settings.API_V1_STR)
 
 app.include_router(auth_router, prefix=settings.API_V1_STR)
+app.mount("/", chatbot.app)
 
 app.include_router(study_router, prefix=settings.API_V1_STR)
 
