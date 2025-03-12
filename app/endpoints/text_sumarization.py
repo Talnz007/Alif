@@ -21,7 +21,7 @@ class SummaryResponse(BaseModel):
 class TextSummarizerGemini:
     def __init__(self):
         # Initialize Gemini API client
-        genai.configure(api_key=settings.GEMINI_KEY)
+
         self.generation_config = {
             "temperature": 0.7,
             "top_p": 0.95,
@@ -36,11 +36,20 @@ class TextSummarizerGemini:
             genai.types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: genai.types.HarmBlockThreshold.BLOCK_NONE,
         }
 
-        self.model = genai.GenerativeModel(
-            model_name="gemini-pro",
-            generation_config=self.generation_config,
-            safety_settings=self.safety_settings
-        )
+        model_name = getattr(settings, "GEMINI_MODEL_NAME", "gemini-pro")
+
+        try:
+            self.model = genai.GenerativeModel(
+                model_name=model_name,
+                generation_config=self.generation_config,
+                safety_settings=self.safety_settings
+            )
+            logger.info(f"TextSummarizerGemini initialized model '{model_name}'.")
+        except Exception as model_init_err:
+            # Log the full error and set model to None so it fails gracefully later
+            logger.exception(
+                f"CRITICAL: Failed to initialize GenerativeModel '{model_name}' in TextSummarizerGemini: {model_init_err}")
+            self.model = None
 
     def _process_text(self, text: str) -> str:
         processed_text = re.sub(r'\s+', ' ', text.strip())
@@ -64,6 +73,10 @@ class TextSummarizerGemini:
         return chunks
 
     async def summarize_text(self, text: str) -> str:
+        if not self.model:
+            logger.error("TextSummarizerGemini model was not initialized successfully during startup.")
+            raise HTTPException(status_code=503, detail="Summarization service model is not available.")
+
         try:
             chunks = self._split_text(text)
             summaries = []
@@ -94,8 +107,13 @@ text_summarizer = TextSummarizerGemini()
 @router.post("/summarize/", response_model=SummaryResponse)
 async def summarize(input_data: TextInput):
     try:
+        # This now calls the modified summarize_text method
         summary = await text_summarizer.summarize_text(input_data.text)
         return {"summary": summary}
+    except HTTPException as http_exc:
+         # If summarize_text raised an HTTPException (like 503), re-raise it
+         raise http_exc
     except Exception as e:
-        logger.error(f"Error during summarization: {e}")
-        raise HTTPException(status_code=500, detail="An error occurred during summarization")
+        # Catch any other unexpected errors happening *outside* the summarize_text call
+        logger.exception(f"Unexpected error in /summarize/ endpoint handler: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected server error occurred during summarization.")

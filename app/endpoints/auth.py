@@ -14,6 +14,8 @@ from app.core.config import settings
 from app.models.user import UserCreate, UserResponse, UserLogin
 from app.database.connection import supabase_db
 from app.core.exception import CustomHTTPException
+from app.core.uuid_helper import ensure_uuid
+
 
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
@@ -122,12 +124,14 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         raise CustomHTTPException(str(e))
 
 
-
 async def log_user_activity(user_id: str, activity_type: str) -> None:
     """Log user activity to the database"""
     try:
+        # Convert user_id to valid UUID format
+        valid_uuid = ensure_uuid(user_id)
+
         supabase_db.table('user_activities').insert({
-            "user_id": user_id,
+            "user_id": str(valid_uuid),  # Convert UUID to string for Supabase
             "activity_type": activity_type
         }).execute()
     except Exception as e:

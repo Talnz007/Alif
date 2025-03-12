@@ -4,28 +4,45 @@ from app.database.connection import supabase_db
 from app.core.exception import CustomHTTPException
 from app.core.app_logging import app_logger
 from app.models.activity import UserActivityLog, ActivityBase
+from app.services.badges_service import BadgeService
+from app.services.badge_checker import BadgeChecker
+
+
+# Create instances at module level for singleton behavior
+badge_service = BadgeService()
+badge_checker = BadgeChecker(badge_service)
 
 
 class ActivityService:
     def __init__(self):
         self.db = supabase_db
 
-    async def log_activity(self, user_id: str, activity_type: str, details: dict = None) -> bool:
-        """Log a user activity"""
+    async def log_activity(self, user_id: str, activity_type: str, details: dict = None) -> dict:
+        """Log a user activity and check for new badges"""
         try:
             activity = {
                 "user_id": user_id,
-                "activity_type": activity_type
+                "activity_type": activity_type,
+                "timestamp": datetime.utcnow().isoformat()
             }
+
             if details:
-                activity["details"] = details
+                activity["metadata"] = details
 
             result = self.db.table('user_activities').insert(activity).execute()
-            return bool(result.data)
+
+            # Check if any badges should be awarded
+            awarded_badges = await badge_checker.check_activity_badges(user_id, activity_type, details)
+
+            return {
+                "success": bool(result.data),
+                "activity_id": result.data[0]["id"] if result.data else None,
+                "new_badges": awarded_badges
+            }
 
         except Exception as e:
             app_logger.error(f"Failed to log activity: {str(e)}")
-            return False
+            return {"success": False, "error": str(e)}
 
     async def get_user_activities(
             self,

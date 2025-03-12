@@ -11,6 +11,8 @@ class Settings(BaseSettings):
     LLAMA_KEY: str = os.getenv("LLAMA_KEY", "")
     GEMINI_KEY: str = os.getenv("GEMINI_KEY", "")
 
+    GEMINI_MODEL_NAME: str = os.getenv("GEMINI_MODEL_NAME", "gemini-2.0-flash")
+
     SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
     SUPABASE_KEY: str = os.getenv("SUPABASE_KEY", "")
 

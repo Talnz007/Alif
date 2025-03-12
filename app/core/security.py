@@ -5,6 +5,8 @@ from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 from app.core.config import settings
 from fastapi import Depends, HTTPException, status
+from app.services.user_service import UserService
+
 
 
 # Password hashing context
@@ -12,6 +14,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # OAuth2 scheme for token-based authentication
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+user_service = UserService()
 
 
 # Dependency to get the current user based on the token
@@ -22,12 +25,18 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        # Decode the JWT token and validate it
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        username: str = payload.get("sub")  # The user is identified by the 'sub' claim
+        username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
-        return username
+
+        # NEW: Fetch the full user object
+        user = await user_service.get_user_by_username(username)
+        if user is None:
+            raise credentials_exception
+
+        return user  # Return full user object with UUID
+
     except JWTError:
         raise credentials_exception
 
