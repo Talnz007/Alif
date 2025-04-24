@@ -4,7 +4,7 @@
 
 ---
 # Architecture
-![Alt Text](https://github.com/Talnz007/Alif/blob/master/ar.png?raw=true)
+![Alt Text](https://github.com/Talnz007/Alif/blob/master/architecture.png?raw=true)
 
 
 ## Features
