@@ -18,26 +18,28 @@ const nextConfig = {
   },
   // Add these settings to fix the build error
   output: 'standalone',
+
+  // Move these properties outside of experimental per Next.js 15 warnings
+  serverExternalPackages: ['@prisma/client', 'bcrypt'],
+  outputFileTracingExcludes: {
+    '*': [
+      'node_modules/framer-motion/**/*',
+      'node_modules/@swc/**/*',
+      'node_modules/react-dom/**/*',
+      'node_modules/react/**/*',
+    ],
+  },
+  skipTrailingSlashRedirect: true,
+
+  // Keep only valid experimental features
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
-    // Add these to fix the route group issue
-    serverComponentsExternalPackages: ['@prisma/client', 'bcrypt'],
-    // Skip handling of specific files during build that cause issues
-    outputFileTracingExcludes: {
-      '*': [
-        'node_modules/framer-motion/**/*',
-        'node_modules/@swc/**/*',
-        'node_modules/react-dom/**/*',
-        'node_modules/react/**/*',
-      ],
-    },
-    // Improve error handling during build
-    skipTrailingSlashRedirect: true,
     fallbackNodePolyfills: false,
   },
-  // Add this to skip client reference manifest errors
+
+  // Skip middleware URL normalization
   skipMiddlewareUrlNormalize: true,
 }
 
