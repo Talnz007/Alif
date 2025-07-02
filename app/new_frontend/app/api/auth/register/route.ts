@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     )
 
     // Call the backend register endpoint - use exact URL from your working curl
-    const response = await fetch('${API_URL}/register', {
+    const response = await fetch(`${API_URL}/register`, {
       method: 'POST',
       headers: {
         'accept': 'application/json',
