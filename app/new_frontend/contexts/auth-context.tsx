@@ -241,7 +241,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           message: data.error || 'Registration failed'
         }
       }
-
+      // For waitlist mode, we'll register the user but NOT log them in
+      // Comment out the following section:
+      /*
       // Store auth data
       localStorage.setItem('access_token', data.access_token)
       localStorage.setItem('username', data.username)
@@ -267,7 +269,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!data.id) {
         fetchAndStoreUserId(data.username, data.access_token)
       }
-
+      */
       toast({
         title: 'Account created!',
         description: 'Welcome to Alif! Start your learning journey now.'

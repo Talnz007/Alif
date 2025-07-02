@@ -1,6 +1,5 @@
 import { Inter } from "next/font/google"
 import "./globals.css"
-import Sidebar from "@/components/sidebar"
 import ClientLayout from "@/components/client-layout"
 import { AuthProvider } from "@/contexts/auth-context"
 import { Toaster } from "@/components/ui/toaster"
@@ -19,13 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <BadgeTracker /> {/* Add this line to show badge notifications */}
           <ClientLayout>
-            {/* Use flex to align sidebar and content side by side */}
-            <div className="flex h-screen">
-              <Sidebar />
-              <div className="flex-1 overflow-y-auto">
-                {children}
-              </div>
-            </div>
+            {children}
           </ClientLayout>
           <Toaster />
         </AuthProvider>

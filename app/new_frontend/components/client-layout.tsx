@@ -1,35 +1,44 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { ThemeProvider } from "next-themes";
-import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { ThemeProvider } from "@/components/theme-provider";
+import Sidebar from "@/components/sidebar";
+import { Navbar } from "@/components/navbar";
+import { useState, useEffect } from "react";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const isLandingPage = pathname === "/";
+  // Add register and login to excluded routes
+  const isAuthPage = pathname === "/register" || pathname === "/login" || pathname === "/signup";
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return null; // Prevents hydration mismatch
+  }
 
+  // For landing page and auth pages, don't show sidebar
+  if (isLandingPage || isAuthPage) {
+    return (
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        {isLandingPage && <Navbar />}
+        <main className={isLandingPage ? "min-h-screen pt-16" : "min-h-screen"}>{children}</main>
+      </ThemeProvider>
+    );
+  }
+
+  // App layout with Sidebar for all other routes
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <div className="flex h-screen">
-        <AnimatePresence mode="wait">
-          <motion.main
-            key={pathname}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="flex-1 overflow-y-auto bg-background transition-colors duration-300"
-          >
-            {children}
-          </motion.main>
-        </AnimatePresence>
+        <Sidebar />
+        <div className="flex-1 overflow-y-auto">
+          {children}
+        </div>
       </div>
     </ThemeProvider>
   );

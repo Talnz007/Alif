@@ -30,7 +30,10 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         if username is None:
             raise credentials_exception
 
-        # NEW: Fetch the full user object
+        # NEW: Normalize username to lowercase for consistent lookups
+        username = username.lower()
+
+        # NEW: Fetch the full user object - ensure case insensitive lookup
         user = await user_service.get_user_by_username(username)
         if user is None:
             raise credentials_exception

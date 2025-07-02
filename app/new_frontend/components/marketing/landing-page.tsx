@@ -1,298 +1,334 @@
 "use client"
 
+import { useState } from "react";
 import Link from "next/link"
-import { motion } from "framer-motion"
+import Image from "next/image"
+import { ArrowRight, BookOpen, Brain, BarChart, Users, CheckCircle, MessageCircle, Linkedin } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { BrainCircuit, FileAudio, Sparkles, Star } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { useToast } from "@/components/ui/use-toast"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 
-const features = [
-  {
-    icon: BrainCircuit,
-    title: "AI-Powered Quiz Generation",
-    description: "Transform any study material into interactive quizzes instantly",
-  },
-  {
-    icon: FileAudio,
-    title: "Lecture Digest",
-    description: "Convert audio lectures into comprehensive, easy-to-review notes",
-  },
-  {
-    icon: Sparkles,
-    title: "Smart Assignment Help",
-    description: "Get intelligent assistance with assignments and homework",
-  },
-]
-
-const testimonials = [
-  {
-    name: "Sarah K.",
-    role: "Computer Science Student",
-    content: "Alif has completely transformed how I study. The AI-generated quizzes are incredibly helpful!",
-    avatar: "/placeholder.svg?height=60&width=60",
-  },
-  {
-    name: "Michael R.",
-    role: "Engineering Major",
-    content: "The lecture summarization feature saves me hours of note-taking time.",
-    avatar: "/placeholder.svg?height=60&width=60",
-  },
-  {
-    name: "Emily L.",
-    role: "Medical Student",
-    content: "The personalized study paths have significantly improved my exam scores.",
-    avatar: "/placeholder.svg?height=60&width=60",
-  },
-]
-
-const stats = [
-  { number: "50K+", label: "Active Students" },
-  { number: "1M+", label: "Quizzes Generated" },
-  { number: "95%", label: "Success Rate" },
-]
+// Import your existing components
+import { HeroAnimation } from "@/components/hero-animation"
+import { FeatureCard } from "@/components/feature-card"
+import { TestimonialCarousel } from "@/components/testimonial-carousel"
+import { PricingTable } from "@/components/pricing-table"
+import { InteractiveDemo } from "@/components/interactive-demo"
 
 export default function LandingPage() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="flex flex-col min-h-screen">
       {/* Hero Section */}
-      <motion.section
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="container mx-auto px-4 pt-20 pb-16 text-center"
-      >
-        <motion.h1
-          variants={itemVariants}
-          className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600"
-        >
-          Transform Your Learning Journey with AI
-        </motion.h1>
-        <motion.p variants={itemVariants} className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-          Harness the power of artificial intelligence to enhance your study experience. Generate quizzes, summarize
-          lectures, and get instant help with assignments.
-        </motion.p>
-        <motion.div variants={itemVariants} className="flex justify-center gap-4">
-          <Link href="/login">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-              Get Started
-            </Button>
-          </Link>
-          <Link href="#features">
-            <Button size="lg" variant="outline">
-              Learn More
-            </Button>
-          </Link>
-        </motion.div>
-      </motion.section>
-
-      {/* Stats Section */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={containerVariants}
-        className="container mx-auto px-4 py-16"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              className="text-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg"
-            >
-              <h3 className="text-4xl font-bold text-blue-600 dark:text-blue-400 mb-2">{stat.number}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{stat.label}</p>
-            </motion.div>
-          ))}
-        </div>
-      </motion.section>
-
-      {/* Features Section */}
-      <motion.section
-        id="features"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={containerVariants}
-        className="container mx-auto px-4 py-16"
-      >
-        <motion.h2
-          variants={itemVariants}
-          className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-white"
-        >
-          Features that Set Us Apart
-        </motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg"
-            >
-              <feature.icon className="w-12 h-12 text-blue-600 dark:text-blue-400 mb-4" />
-              <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-white">{feature.title}</h3>
-              <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
-            </motion.div>
-          ))}
-        </div>
-      </motion.section>
-
-      {/* Testimonials Section */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={containerVariants}
-        className="container mx-auto px-4 py-16"
-      >
-        <motion.h2
-          variants={itemVariants}
-          className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-white"
-        >
-          What Our Users Say
-        </motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={index}
-              variants={itemVariants}
-              className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg"
-            >
-              <div className="flex items-center mb-4">
-                <img
-                  src={testimonial.avatar || "/placeholder.svg"}
-                  alt={testimonial.name}
-                  className="w-12 h-12 rounded-full mr-4"
-                />
-                <div>
-                  <h4 className="font-semibold text-gray-800 dark:text-white">{testimonial.name}</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">{testimonial.role}</p>
+      <section className="relative py-20 md:py-28 overflow-hidden bg-gradient-to-b from-indigo-50/50 via-background to-background dark:from-indigo-950/20">
+        <div className="container px-4 md:px-6 mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="flex flex-col space-y-6">
+              <div className="inline-flex items-center px-3 py-1 rounded-full border border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300 text-sm font-medium mb-2">
+                <span className="flex h-2 w-2 rounded-full bg-indigo-600 mr-2"></span>
+                Introducing Alif
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-orange-500">
+                  Smarter Learning,
+                </span>
+                <br />
+                Less Noise.
+              </h1>
+              <p className="text-xl text-muted-foreground max-w-[600px]">
+                Your notes, PDFs, and lectures — turned into videos, flashcards, and quizzes.
+                <br />
+                No more switching tabs. Just focus and learn.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 mt-2">
+                <Button
+                  size="lg"
+                  asChild
+                  className="bg-gradient-to-r from-indigo-600 to-orange-500 hover:from-indigo-700 hover:to-orange-600"
+                >
+                  <Link href="/register" target="_blank">
+                    Sign Up for Early Access <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  asChild
+                  className="border-indigo-200 hover:bg-indigo-50 dark:border-indigo-800 dark:hover:bg-indigo-900/20 bg-transparent"
+                >
+                  <Link href="#demo">Try Demo</Link>
+                </Button>
+              </div>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground mt-4">
+                <div className="flex items-center">
+                  <CheckCircle className="h-4 w-4 mr-2 text-indigo-600" />
+                  <span>No credit card required</span>
+                </div>
+                <div className="flex items-center">
+                  <CheckCircle className="h-4 w-4 mr-2 text-indigo-600" />
+                  <span>Clarity over clutter</span>
                 </div>
               </div>
-              <p className="text-gray-600 dark:text-gray-300">{testimonial.content}</p>
-            </motion.div>
-          ))}
+            </div>
+            <div className="relative">
+              <HeroAnimation />
+            </div>
+          </div>
         </div>
-      </motion.section>
+      </section>
+
+      {/* Email Registration Section */}
+      <EmailRegistrationSection />
+
+      {/* Tools Section */}
+      <section id="tools" className="py-20 bg-muted/30">
+        <div className="container px-4 md:px-6 mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tighter mb-4">What Can Alif Do?</h2>
+            <p className="text-xl text-muted-foreground max-w-[800px] mx-auto">
+              Transform your study materials into active learning experiences with our AI-powered tools.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <FeatureCard
+              icon={<BookOpen className="h-10 w-10" />}
+              title="AI-Powered Summarizer"
+              description="Upload PDFs or lecture notes and get clear, concise summaries in seconds. Perfect for quick revision before exams."
+              gradient="from-indigo-50 to-blue-50 dark:from-indigo-950/30 dark:to-blue-950/30"
+              iconColor="text-indigo-600"
+            />
+            <FeatureCard
+              icon={<Brain className="h-10 w-10" />}
+              title="Explainer Video Generator"
+              description="Turn your notes into short, animated videos with voice-overs. Make complex concepts easy to understand."
+              gradient="from-orange-50 to-amber-50 dark:from-orange-950/30 dark:to-amber-950/30"
+              iconColor="text-orange-600"
+            />
+            <FeatureCard
+              icon={<BarChart className="h-10 w-10" />}
+              title="Smart Flashcard Creator"
+              description="AI automatically creates spaced-repetition flashcards from your content to help you memorize key concepts."
+              gradient="from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30"
+              iconColor="text-purple-600"
+            />
+            <FeatureCard
+              icon={<Users className="h-10 w-10" />}
+              title="Quiz Generator"
+              description="Instantly generate concept-based quizzes from any learning material. Test your knowledge and identify weak areas."
+              gradient="from-green-50 to-teal-50 dark:from-green-950/30 dark:to-teal-950/30"
+              iconColor="text-green-600"
+            />
+            <FeatureCard
+              icon={<BookOpen className="h-10 w-10" />}
+              title="Assignment Assistant"
+              description="Get AI help to understand assignment questions and learn effective approaches to tackle complex problems."
+              gradient="from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30"
+              iconColor="text-blue-600"
+            />
+            <FeatureCard
+              icon={<MessageCircle className="h-10 w-10" />}
+              title="AI Chat Tutor"
+              description="Ask contextual questions and get personalized explanations on your study content. Like having a tutor available 24/7."
+              gradient="from-rose-50 to-red-50 dark:from-rose-950/30 dark:to-red-950/30"
+              iconColor="text-rose-600"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Demo Section */}
+      <section id="demo" className="py-20">
+        <div className="container px-4 md:px-6 mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tighter mb-4">Experience Interactive Learning</h2>
+            <p className="text-xl text-muted-foreground max-w-[800px] mx-auto">
+              Try our interactive demos to see how Alif transforms your study materials into engaging learning
+              experiences.
+            </p>
+          </div>
+
+          <InteractiveDemo />
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-20 bg-muted/30">
+        <div className="container px-4 md:px-6 mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tighter mb-4">What Our Learners Say</h2>
+            <p className="text-xl text-muted-foreground max-w-[800px] mx-auto">
+              Join thousands of students already simplifying how they learn with Alif.
+            </p>
+          </div>
+
+          <TestimonialCarousel />
+        </div>
+      </section>
 
       {/* Pricing Section */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={containerVariants}
-        className="container mx-auto px-4 py-16"
-      >
-        <motion.h2
-          variants={itemVariants}
-          className="text-3xl font-bold text-center mb-12 text-gray-800 dark:text-white"
-        >
-          Choose Your Plan
-        </motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <motion.div variants={itemVariants} className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Free</h3>
-            <p className="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">$0</p>
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-center text-gray-600 dark:text-gray-300">
-                <Star className="w-5 h-5 mr-2 text-green-500" /> Basic quiz generation
-              </li>
-              <li className="flex items-center text-gray-600 dark:text-gray-300">
-                <Star className="w-5 h-5 mr-2 text-green-500" /> Limited summaries
-              </li>
-              <li className="flex items-center text-gray-600 dark:text-gray-300">
-                <Star className="w-5 h-5 mr-2 text-green-500" /> Community support
-              </li>
-            </ul>
-            <Button className="w-full">Get Started</Button>
-          </motion.div>
+      <section id="pricing" className="py-20">
+        <div className="container px-4 md:px-6 mx-auto max-w-7xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tighter mb-4">Simple, Transparent Pricing</h2>
+            <p className="text-xl text-muted-foreground max-w-[800px] mx-auto">
+              Choose the plan that fits your learning needs. Start free and upgrade as you grow.
+            </p>
+          </div>
 
-          <motion.div
-            variants={itemVariants}
-            className="p-6 bg-blue-600 dark:bg-blue-700 rounded-lg shadow-lg transform scale-105"
-          >
-            <h3 className="text-xl font-semibold mb-4 text-white">Pro</h3>
-            <p className="text-3xl font-bold mb-6 text-white">$19/mo</p>
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-center text-white">
-                <Star className="w-5 h-5 mr-2 text-yellow-400" /> Unlimited quiz generation
-              </li>
-              <li className="flex items-center text-white">
-                <Star className="w-5 h-5 mr-2 text-yellow-400" /> Full lecture summaries
-              </li>
-              <li className="flex items-center text-white">
-                <Star className="w-5 h-5 mr-2 text-yellow-400" /> Priority support
-              </li>
-              <li className="flex items-center text-white">
-                <Star className="w-5 h-5 mr-2 text-yellow-400" /> Advanced analytics
-              </li>
-            </ul>
-            <Button className="w-full bg-white text-blue-600 hover:bg-gray-100">Get Pro</Button>
-          </motion.div>
-
-          <motion.div variants={itemVariants} className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Enterprise</h3>
-            <p className="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">Custom</p>
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-center text-gray-600 dark:text-gray-300">
-                <Star className="w-5 h-5 mr-2 text-purple-500" /> Custom integration
-              </li>
-              <li className="flex items-center text-gray-600 dark:text-gray-300">
-                <Star className="w-5 h-5 mr-2 text-purple-500" /> Dedicated support
-              </li>
-              <li className="flex items-center text-gray-600 dark:text-gray-300">
-                <Star className="w-5 h-5 mr-2 text-purple-500" /> Custom features
-              </li>
-              <li className="flex items-center text-gray-600 dark:text-gray-300">
-                <Star className="w-5 h-5 mr-2 text-purple-500" /> SLA guarantee
-              </li>
-            </ul>
-            <Button variant="outline" className="w-full">
-              Contact Sales
-            </Button>
-          </motion.div>
+          <PricingTable />
         </div>
-      </motion.section>
+      </section>
 
       {/* CTA Section */}
-      <motion.section
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={containerVariants}
-        className="container mx-auto px-4 py-16"
-      >
-        <motion.div variants={itemVariants} className="bg-blue-600 dark:bg-blue-700 rounded-lg p-12 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">Ready to Transform Your Learning?</h2>
-          <p className="text-xl text-blue-100 mb-8">Join thousands of students already using Alif</p>
-          <Link href="/login">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
-              Get Started Now
-            </Button>
-          </Link>
-        </motion.div>
-      </motion.section>
+      <section className="py-20 bg-gradient-to-r from-indigo-600 to-orange-500 text-white">
+        <div className="container px-4 md:px-6 mx-auto max-w-7xl">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div className="space-y-4 text-center lg:text-left">
+              <h2 className="text-3xl font-bold tracking-tighter">Ready to Transform Your Learning?</h2>
+              <p className="text-xl max-w-[600px] text-white/90">
+                Join thousands of students who are getting ready to achieve their academic goals with Alif.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button size="lg" variant="secondary" asChild className="bg-white text-indigo-600 hover:bg-gray-100">
+                <Link href="/register" target="_blank">
+                  Sign Up for Early Access <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t py-12 bg-gray-900 text-white">
+        <div className="container px-4 md:px-6 mx-auto max-w-7xl">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div className="md:col-span-1">
+              <Link href="/" className="flex items-center space-x-3 mb-4">
+                <div className="relative h-8 w-8 flex-shrink-0">
+                  <Image src="alif-logo-white.jpeg" alt="الف" fill className="object-contain" />
+                </div>
+                <span className="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-orange-400">
+                  Alif
+                </span>
+              </Link>
+              <p className="text-gray-300 mb-4">Smarter learning, less noise.</p>
+              <div className="text-sm font-medium bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-orange-400">
+                Built with 💙 in Pakistan
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-medium mb-3 text-white">Platform</h3>
+              <ul className="space-y-2">
+                <li>
+                  <Link href="#tools" className="text-sm text-gray-300 hover:text-indigo-400 transition-colors">
+                    AI Tools
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#demo" className="text-sm text-gray-300 hover:text-indigo-400 transition-colors">
+                    Interactive Demo
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#pricing" className="text-sm text-gray-300 hover:text-indigo-400 transition-colors">
+                    Pricing
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-medium mb-3 text-white">Connect</h3>
+              <div className="mb-4">
+                <Link
+                  href="https://www.linkedin.com/company/alifedu"
+                  className="text-gray-300 hover:text-indigo-400 transition-colors inline-flex items-center"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Linkedin className="h-5 w-5 mr-2" />
+                  <span className="text-sm">LinkedIn</span>
+                </Link>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center md:items-start">
+              <h3 className="font-medium mb-3 text-white">📱 Explore Alif Links</h3>
+              <div className="relative w-32 h-32 mb-4">
+                <Image
+                  src="linktree-qr.png"
+                  alt="Alif Linktree QR Code"
+                  fill
+                  className="object-contain rounded-lg bg-white p-2"
+                />
+              </div>
+              <p className="text-xs text-gray-400 text-center md:text-left">Scan to access all our social links</p>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
+            <p className="text-sm text-gray-400">&copy; {new Date().getFullYear()} Alif. All rights reserved.</p>
+            <div className="flex items-center space-x-4">
+              <Link href="/terms" className="text-sm text-gray-400 hover:text-indigo-400 transition-colors">
+                Terms
+              </Link>
+              <Link href="/privacy" className="text-sm text-gray-400 hover:text-indigo-400 transition-colors">
+                Privacy
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Floating QR Code for Mobile */}
+        <div className="fixed bottom-4 right-4 md:hidden z-40">
+          <div className="bg-white rounded-lg p-2 shadow-lg border">
+            <div className="relative w-16 h-16">
+              <Image src="/linktree-qr.png" alt="Alif Links" fill className="object-contain" />
+            </div>
+            <p className="text-xs text-center text-gray-600 mt-1">Alif Links</p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
 
+// Email Registration Section Component
+// Email Registration Section Component - simplified version without email input
+function EmailRegistrationSection() {
+  const router = useRouter();
+
+  return (
+    <section className="py-16 bg-gray-50 dark:bg-gray-800 border-y border-gray-200 dark:border-gray-700">
+      <div className="container px-4 md:px-6 mx-auto max-w-7xl">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="text-center md:text-left max-w-md">
+            <h2 className="text-2xl md:text-3xl font-bold mb-2">
+              Join Our Early Access Program
+            </h2>
+            <p className="text-muted-foreground">
+              Be among the first to experience Alif's full capabilities.
+            </p>
+          </div>
+
+          <div className="w-full md:w-auto max-w-md text-center">
+            <Button
+              onClick={() => router.push('/register')}
+              className="h-12 px-8 bg-gradient-to-r from-indigo-600 to-orange-500 hover:from-indigo-700 hover:to-orange-600 w-full sm:w-auto"
+            >
+              Get Early Access
+            </Button>
+            <p className="mt-2 text-xs text-muted-foreground">
+              By signing up, you agree to our <Link href="/terms" className="underline hover:text-indigo-600">Terms</Link> and <Link href="/privacy" className="underline hover:text-indigo-600">Privacy Policy</Link>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

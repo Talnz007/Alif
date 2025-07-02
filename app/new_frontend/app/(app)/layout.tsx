@@ -2,12 +2,13 @@
 
 import type React from "react"
 
-import { Inter, Roboto, Poppins } from "next/font/google"
+import { Inter } from "next/font/google"
 import { useState, useEffect } from "react"
 import { ThemeProvider } from "next-themes"
 import { AnimatePresence, motion } from "framer-motion"
 import { usePathname } from "next/navigation"
-import Sidebar from "@/components/sidebar"
+// Remove the sidebar import as it's handled by ClientLayout
+// import Sidebar from "@/components/sidebar"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -30,7 +31,7 @@ export default function AppLayout({
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <div className={`flex h-screen ${inter.className} main-gradient dark:main-gradient-dark`}>
-        <Sidebar />
+        {/* Remove sidebar from here */}
         <AnimatePresence mode="wait">
           <motion.main
             key={pathname}
@@ -47,4 +48,3 @@ export default function AppLayout({
     </ThemeProvider>
   )
 }
-

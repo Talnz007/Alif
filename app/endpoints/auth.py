@@ -16,14 +16,10 @@ from app.database.connection import supabase_db
 from app.core.exception import CustomHTTPException
 from app.core.uuid_helper import ensure_uuid
 
-
-
 router = APIRouter(prefix="/auth", tags=["authentication"])
-
 
 def get_remote_address(request: Request) -> str:
     return request.client.host
-
 
 @router.get("/protected-route")
 async def protected_route(current_user: str = Depends(get_current_user)):
@@ -32,10 +28,25 @@ async def protected_route(current_user: str = Depends(get_current_user)):
 @router.post("/register", response_model=UserResponse)
 async def register(user_data: UserCreate) -> Any:
     try:
-        # Check if user exists
+        # Normalize username and email to lowercase for case-insensitive comparison
+        normalized_username = user_data.username.lower()
+        normalized_email = user_data.email.lower()
+
+        # Check if user exists using case-insensitive search
+        # First try using the ilike operator for case-insensitive comparison
         existing_user = supabase_db.table('users').select("*").or_(
-            f"email.eq.{user_data.email},username.eq.{user_data.username}"
+            f"email.ilike.{normalized_email},username.ilike.{normalized_username}"
         ).execute()
+
+        # If ilike isn't supported, fallback to direct lowercase comparison
+        if not existing_user.data:
+            existing_user = supabase_db.table('users').select("*").execute()
+            # Manual case-insensitive filtering
+            existing_user.data = [
+                user for user in existing_user.data
+                if user.get('email', '').lower() == normalized_email or
+                   user.get('username', '').lower() == normalized_username
+            ]
 
         if existing_user.data:
             raise CustomHTTPException(
@@ -46,10 +57,10 @@ async def register(user_data: UserCreate) -> Any:
         # Hash password
         hashed_password = get_password_hash(user_data.password)
 
-        # Create user
+        # Create user (store normalized lowercase versions of username and email)
         new_user = {
-            "username": user_data.username,
-            "email": user_data.email,
+            "username": normalized_username,
+            "email": normalized_email,
             "password": hashed_password
         }
 
@@ -61,30 +72,42 @@ async def register(user_data: UserCreate) -> Any:
         # Create access token
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": user_data.username}, expires_delta=access_token_expires
+            data={"sub": normalized_username}, expires_delta=access_token_expires
         )
 
         # Log activity
         await log_user_activity(result.data[0]['id'], "user_registration")
 
         return {
-            "username": user_data.username,
-            "email": user_data.email,
+            "username": normalized_username,
+            "email": normalized_email,
             "access_token": access_token
         }
 
     except Exception as e:
         raise CustomHTTPException(str(e))
 
-
 @router.post("/login", response_model=UserResponse)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     try:
-        print(f"Received username: {form_data.username}")
+        # Normalize username to lowercase for case-insensitive login
+        normalized_username = form_data.username.lower()
+        print(f"Received username: {form_data.username} (normalized to {normalized_username})")
         print(f"Received password: {form_data.password}")
 
-        # Fetch user from the database
-        user_result = supabase_db.table('users').select("*").eq("username", form_data.username).execute()
+        # Try case-insensitive search first using ilike
+        user_result = supabase_db.table('users').select("*").ilike("username", normalized_username).execute()
+
+        # If ilike isn't supported or no results, try alternative case-insensitive approach
+        if not user_result.data:
+            # Get all users and filter manually by lowercase username
+            all_users = supabase_db.table('users').select("*").execute()
+            user_result.data = [
+                user for user in all_users.data
+                if user.get('username', '').lower() == normalized_username or
+                   user.get('email', '').lower() == normalized_username
+            ]
+
         print(f"User query result: {user_result.data}")
 
         if not user_result.data:
@@ -103,7 +126,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
                 status_code=status.HTTP_401_UNAUTHORIZED
             )
 
-        # Create access token
+        # Create access token using the normalized username
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
             data={"sub": user["username"]}, expires_delta=access_token_expires
@@ -122,7 +145,6 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     except Exception as e:
         print(f"Login error: {e}")  # Log any exceptions
         raise CustomHTTPException(str(e))
-
 
 async def log_user_activity(user_id: str, activity_type: str) -> None:
     """Log user activity to the database"""

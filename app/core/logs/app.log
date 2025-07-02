@@ -4256,3 +4256,201 @@ First, find the first derivative dy/d... - /home/talnz/PythonProjects/Alif/app/e
 2025-07-01 22:00:39,560 - app_logger - INFO - Application startup: Configuring services... - /home/talnz/PythonProjects/Alif/app/main.py:35
 2025-07-01 22:00:39,569 - app_logger - INFO - Google Generative AI configured successfully. - /home/talnz/PythonProjects/Alif/app/main.py:39
 2025-07-01 22:03:43,781 - app_logger - INFO - Application shutdown. - /home/talnz/PythonProjects/Alif/app/main.py:49
+2025-07-02 13:29:48,061 - app_logger - INFO - Application startup: Configuring services... - /home/talnz/PythonProjects/Alif/app/main.py:35
+2025-07-02 13:29:48,061 - app_logger - INFO - Google Generative AI configured successfully. - /home/talnz/PythonProjects/Alif/app/main.py:39
+2025-07-02 13:30:09,671 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:30:09,671 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:30:09,671 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:30:09,671 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:30:09,672 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:30:09,672 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:30:09,672 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:30:09,708 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:30:09,708 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:30:09,708 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:30:09,708 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:30:09,715 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:30:09,715 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:30:09,715 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:30:09,764 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:30:09,764 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:30:09,812 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:30:09,812 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:30:10,261 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:30:10,261 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:30:10,261 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:30:10,261 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:30:10,262 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:30:10,262 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:30:10,262 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:30:10,290 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:30:10,290 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:30:10,291 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:30:10,291 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:30:10,291 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:30:10,291 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:30:10,291 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:30:10,534 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:30:10,534 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:30:10,671 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:30:10,672 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:30:20,268 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:30:20,268 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:30:20,269 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:30:20,269 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:30:20,269 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:30:20,269 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:30:20,269 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:30:20,276 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:30:20,276 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:30:30,348 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:30:30,348 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:30:30,348 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:30:30,349 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:30:30,350 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:30:30,350 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:30:30,350 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:30:30,377 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:30:30,377 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:30:41,008 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:30:41,010 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:30:41,053 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:30:41,053 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:30:41,054 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:30:41,054 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:30:41,054 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:30:41,117 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:30:41,125 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:32:24,891 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:32:24,893 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:32:24,894 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:32:24,894 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:32:24,894 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:32:24,894 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:32:24,895 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:32:24,905 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:32:24,905 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:32:24,905 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:32:24,906 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:32:24,906 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:32:24,906 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:32:24,906 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:32:25,314 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:32:25,315 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:32:25,315 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:32:25,315 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:32:25,315 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:32:25,315 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:32:25,316 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:32:25,357 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:32:25,359 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:32:25,430 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:32:25,430 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:32:25,432 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:32:25,432 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:32:25,432 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:32:25,433 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:32:25,433 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:32:25,434 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:32:25,435 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:32:25,748 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:32:25,748 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:32:25,829 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:32:25,832 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:32:35,300 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 13:32:35,301 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 13:32:35,301 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 13:32:35,301 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 13:32:35,301 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 13:32:35,301 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 13:32:35,308 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 13:32:35,321 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 13:32:35,321 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 13:32:42,247 - app_logger - INFO - Application shutdown. - /home/talnz/PythonProjects/Alif/app/main.py:49
+2025-07-02 16:47:04,614 - app_logger - INFO - Application startup: Configuring services... - /home/talnz/PythonProjects/Alif/app/main.py:35
+2025-07-02 16:47:04,614 - app_logger - INFO - Google Generative AI configured successfully. - /home/talnz/PythonProjects/Alif/app/main.py:39
+2025-07-02 16:52:58,673 - app_logger - INFO - Application shutdown. - /home/talnz/PythonProjects/Alif/app/main.py:49
+2025-07-02 17:11:18,758 - app_logger - INFO - Application startup: Configuring services... - /home/talnz/PythonProjects/Alif/app/main.py:35
+2025-07-02 17:11:18,758 - app_logger - INFO - Google Generative AI configured successfully. - /home/talnz/PythonProjects/Alif/app/main.py:39
+2025-07-02 17:54:12,959 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 17:54:13,141 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 17:54:13,142 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 17:54:13,142 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 17:54:13,142 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 17:54:13,146 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 17:54:13,146 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 17:54:13,197 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 17:54:13,197 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 17:54:13,198 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 17:54:13,198 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 17:54:13,198 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 17:54:13,199 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 17:54:13,199 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 17:54:13,832 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 17:54:13,835 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 17:54:13,835 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 17:54:13,835 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 17:54:13,836 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 17:54:13,836 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 17:54:13,836 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 17:54:13,914 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 17:54:13,914 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 17:54:13,914 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 17:54:13,914 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 17:54:13,914 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 17:54:13,915 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 17:54:13,915 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 17:54:14,052 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 17:54:14,052 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 17:54:14,170 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 17:54:14,194 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 17:54:14,253 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 17:54:14,375 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 17:54:14,416 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 17:54:14,417 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 17:54:23,587 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 17:54:23,588 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 17:54:23,588 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 17:54:23,588 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 17:54:23,588 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 17:54:23,589 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 17:54:23,589 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 17:54:23,633 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 17:54:23,634 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 17:55:57,368 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 17:55:57,370 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 17:55:57,380 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 17:55:57,380 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 17:55:57,380 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 17:55:57,381 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 17:55:57,383 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 17:55:57,438 - app_logger - INFO - GET /active-files called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:76
+2025-07-02 17:55:57,439 - app_logger - INFO - No active files, checking vector_db. Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:81
+2025-07-02 17:55:57,439 - app_logger - INFO - Vector DB exists: False - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:159
+2025-07-02 17:55:57,445 - app_logger - INFO - Fallback metadata available: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:160
+2025-07-02 17:55:57,445 - app_logger - INFO - Final file entries: 0 with names: [] - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:254
+2025-07-02 17:55:57,446 - app_logger - INFO - After sync, active files count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:84
+2025-07-02 17:55:57,446 - app_logger - INFO - Returning 0 active files - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:90
+2025-07-02 17:55:58,486 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 17:55:58,490 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 17:55:58,596 - app_logger - INFO - GET /knowledge-bases called - Current count: 0 - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:125
+2025-07-02 17:55:58,597 - app_logger - INFO - Returning 0 knowledge bases - /home/talnz/PythonProjects/Alif/app/endpoints/document_context.py:144
+2025-07-02 18:31:38,199 - app_logger - INFO - Application shutdown. - /home/talnz/PythonProjects/Alif/app/main.py:49
+2025-07-02 19:05:17,268 - app_logger - INFO - Application startup: Configuring services... - /home/talnz/PythonProjects/Alif/app/main.py:35
+2025-07-02 19:05:17,281 - app_logger - INFO - Google Generative AI configured successfully. - /home/talnz/PythonProjects/Alif/app/main.py:39
+2025-07-02 19:12:59,240 - app_logger - INFO - Application shutdown. - /home/talnz/PythonProjects/Alif/app/main.py:49
+2025-07-02 19:13:24,838 - app_logger - INFO - Application startup: Configuring services... - /home/talnz/PythonProjects/Alif/app/main.py:35
+2025-07-02 19:13:24,838 - app_logger - INFO - Google Generative AI configured successfully. - /home/talnz/PythonProjects/Alif/app/main.py:39
+2025-07-02 19:13:53,664 - app_logger - INFO - Application shutdown. - /home/talnz/PythonProjects/Alif/app/main.py:49
+2025-07-02 19:14:05,331 - app_logger - INFO - Application startup: Configuring services... - /home/talnz/PythonProjects/Alif/app/main.py:35
+2025-07-02 19:14:05,334 - app_logger - INFO - Google Generative AI configured successfully. - /home/talnz/PythonProjects/Alif/app/main.py:39
+2025-07-02 19:14:40,695 - app_logger - INFO - Application shutdown. - /home/talnz/PythonProjects/Alif/app/main.py:49
+2025-07-02 19:14:53,811 - app_logger - INFO - Application startup: Configuring services... - /home/talnz/PythonProjects/Alif/app/main.py:35
+2025-07-02 19:14:53,812 - app_logger - INFO - Google Generative AI configured successfully. - /home/talnz/PythonProjects/Alif/app/main.py:39
+2025-07-02 19:14:57,974 - app_logger - INFO - Application shutdown. - /home/talnz/PythonProjects/Alif/app/main.py:49
+2025-07-02 19:15:09,066 - app_logger - INFO - Application startup: Configuring services... - /home/talnz/PythonProjects/Alif/app/main.py:35
+2025-07-02 19:15:09,066 - app_logger - INFO - Google Generative AI configured successfully. - /home/talnz/PythonProjects/Alif/app/main.py:39
+2025-07-02 19:16:36,834 - app_logger - INFO - Application shutdown. - /home/talnz/PythonProjects/Alif/app/main.py:49
+2025-07-02 19:16:51,061 - app_logger - INFO - Application startup: Configuring services... - /home/talnz/PythonProjects/Alif/app/main.py:35
+2025-07-02 19:16:51,062 - app_logger - INFO - Google Generative AI configured successfully. - /home/talnz/PythonProjects/Alif/app/main.py:39
+2025-07-02 22:35:37,320 - app_logger - INFO - Application shutdown. - /home/talnz/PythonProjects/Alif/app/main.py:49
