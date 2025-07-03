@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1/auth";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     )
 
     // Call the backend register endpoint - use exact URL from your working curl
-    const response = await fetch(`${API_URL}/register`, {
+    const response = await fetch(`${API_BASE}/api/v1/auth/register`, {
       method: 'POST',
       headers: {
         'accept': 'application/json',
