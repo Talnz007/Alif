@@ -273,14 +273,14 @@ export default function LandingPage() {
 
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
             <p className="text-sm text-gray-400">&copy; {new Date().getFullYear()} Alif. All rights reserved.</p>
-            <div className="flex items-center space-x-4">
-              <Link href="/terms" className="text-sm text-gray-400 hover:text-indigo-400 transition-colors">
-                Terms
-              </Link>
-              <Link href="/privacy" className="text-sm text-gray-400 hover:text-indigo-400 transition-colors">
-                Privacy
-              </Link>
-            </div>
+            {/*<div className="flex items-center space-x-4">*/}
+            {/*  <Link href="/terms" className="text-sm text-gray-400 hover:text-indigo-400 transition-colors">*/}
+            {/*    Terms*/}
+            {/*  </Link>*/}
+            {/*  <Link href="/privacy" className="text-sm text-gray-400 hover:text-indigo-400 transition-colors">*/}
+            {/*    Privacy*/}
+            {/*  </Link>*/}
+            {/*</div>*/}
           </div>
         </div>
 
@@ -323,9 +323,9 @@ function EmailRegistrationSection() {
             >
               Get Early Access
             </Button>
-            <p className="mt-2 text-xs text-muted-foreground">
-              By signing up, you agree to our <Link href="/terms" className="underline hover:text-indigo-600">Terms</Link> and <Link href="/privacy" className="underline hover:text-indigo-600">Privacy Policy</Link>.
-            </p>
+            {/*<p className="mt-2 text-xs text-muted-foreground">*/}
+            {/*  By signing up, you agree to our <Link href="/terms" className="underline hover:text-indigo-600">Terms</Link> and <Link href="/privacy" className="underline hover:text-indigo-600">Privacy Policy</Link>.*/}
+            {/*</p>*/}
           </div>
         </div>
       </div>

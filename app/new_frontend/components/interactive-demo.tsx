@@ -393,9 +393,13 @@ export function InteractiveDemo() {
                       transition={{ duration: 0.6, ease: "easeInOut" }}
                     >
                       {/* Front of card */}
-                      <Card className="absolute inset-0 w-full h-full backface-hidden border-2 border-indigo-200 dark:border-indigo-800 shadow-lg">
-                        <CardContent className="flex flex-col items-center justify-center h-full p-6 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/50 dark:to-blue-950/50">
-                          <div className="text-xs font-medium text-indigo-600 dark:text-indigo-400 mb-2 uppercase tracking-wide">
+                      <Card
+                          className="absolute inset-0 w-full h-full border-2 border-indigo-200 dark:border-indigo-800 shadow-lg"
+                          style={{backfaceVisibility: "hidden"}}>
+                        <CardContent
+                            className="flex flex-col items-center justify-center h-full p-6 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/50 dark:to-blue-950/50">
+                          <div
+                              className="text-xs font-medium text-indigo-600 dark:text-indigo-400 mb-2 uppercase tracking-wide">
                             {sampleFlashcards[currentCard].subject}
                           </div>
                           <h3 className="text-xl font-semibold text-center mb-4">Question</h3>
@@ -404,13 +408,15 @@ export function InteractiveDemo() {
                         </CardContent>
                       </Card>
 
-                      {/* Back of card */}
+                      {/* Back of card - add backface-visibility: hidden and fix the transform */}
                       <Card
-                        className="absolute inset-0 w-full h-full backface-hidden border-2 border-orange-200 dark:border-orange-800 shadow-lg"
-                        style={{ transform: "rotateY(180deg)" }}
+                          className="absolute inset-0 w-full h-full border-2 border-orange-200 dark:border-orange-800 shadow-lg"
+                          style={{transform: "rotateY(180deg)", backfaceVisibility: "hidden"}}
                       >
-                        <CardContent className="flex flex-col items-center justify-center h-full p-6 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/50 dark:to-amber-950/50">
-                          <div className="text-xs font-medium text-orange-600 dark:text-orange-400 mb-2 uppercase tracking-wide">
+                        <CardContent
+                            className="flex flex-col items-center justify-center h-full p-6 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/50 dark:to-amber-950/50">
+                          <div
+                              className="text-xs font-medium text-orange-600 dark:text-orange-400 mb-2 uppercase tracking-wide">
                             {sampleFlashcards[currentCard].subject}
                           </div>
                           <h3 className="text-xl font-semibold text-center mb-4">Answer</h3>
