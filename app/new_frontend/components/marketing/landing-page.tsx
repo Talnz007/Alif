@@ -261,7 +261,7 @@ export default function LandingPage() {
               <h3 className="font-medium mb-3 text-white">📱 Explore Alif Links</h3>
               <div className="relative w-32 h-32 mb-4">
                 <Image
-                  src="linktree-qr.png"
+                  src="/linktree-qr.png"
                   alt="Alif Linktree QR Code"
                   fill
                   className="object-contain rounded-lg bg-white p-2"

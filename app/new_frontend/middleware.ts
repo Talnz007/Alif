@@ -19,27 +19,53 @@ const authRoutes = [
   '/forgot-password',
 ]
 
+// Define public routes - these don't require authentication
+const publicRoutes = [
+  '/',           // Landing page
+  '/register',   // Registration page is also public
+]
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Check for auth state cookie
   const hasToken = request.cookies.has("auth_state")
 
+  // Skip middleware for static files
+  if (
+    pathname.includes('.png') ||
+    pathname.includes('.jpg') ||
+    pathname.includes('.jpeg') ||
+    pathname.includes('.svg') ||
+    pathname.includes('.ico') ||
+    pathname.includes('/images/') ||
+    pathname.startsWith('/linktree-qr')
+  ) {
+    return NextResponse.next()
+  }
+
   // If user is authenticated and tries to access auth pages, redirect to study-assistant
   if (hasToken && authRoutes.includes(pathname)) {
     return NextResponse.redirect(new URL("/study-assistant", request.url))
   }
 
-  // If user is not authenticated and tries to access protected pages, redirect to login
+  // If user is not authenticated and tries to access protected routes, redirect to login
   if (!hasToken && protectedRoutes.some(route => pathname.startsWith(route))) {
     const url = new URL('/login', request.url)
     url.searchParams.set('from', pathname) // Save original destination for redirect after login
     return NextResponse.redirect(url)
   }
 
-  // For API routes, add the user ID from local storage if available
-  // Note: This won't work directly in middleware since it can't access localStorage
-  // Instead, we'll use a client-side approach where components add the user ID to requests
+  // If user is not authenticated and tries to access any route not in publicRoutes,
+  // redirect to landing page (except for API routes and static assets)
+  if (!hasToken && !publicRoutes.includes(pathname)) {
+    if (!pathname.startsWith('/api/') &&
+        !pathname.startsWith('/_next/') &&
+        !pathname.includes('.') &&
+        !pathname.startsWith('/linktree-qr')) {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
+  }
 
   return NextResponse.next()
 }
