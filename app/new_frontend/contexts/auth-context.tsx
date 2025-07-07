@@ -152,6 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
   // Sign in function
+  // Sign in function
   const signIn = async (username: string, password: string) => {
     setLoading(true)
 
@@ -176,8 +177,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      await UserActivity.login();
-
       // Store auth data
       localStorage.setItem('access_token', data.access_token)
       localStorage.setItem('username', data.username)
@@ -201,10 +200,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       // If we don't have a UUID in the response, fetch it
       if (!data.id) {
-        fetchAndStoreUserId(data.username, data.access_token)
+        await fetchAndStoreUserId(data.username, data.access_token)
       }
 
-      return { success: true, message: 'Signed in successfully' }
+      // MOVED: Log login activity AFTER user ID is stored
+      try {
+        await UserActivity.login();
+      } catch (error) {
+        console.warn("Failed to log login activity:", error);
+        // Don't fail login if activity logging fails
+      }
+
+      return {success: true, message: 'Signed in successfully'}
     } catch (error) {
       console.error('Sign in error:', error)
       return {

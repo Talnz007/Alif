@@ -16,8 +16,9 @@ import { jsPDF } from "jspdf"
 import 'jspdf-autotable'
 import ReactMarkdown from "react-markdown"
 import remarkGfm from 'remark-gfm'
-import { trackActivity, calculateAssignmentPoints, awardPoints } from "@/lib/activity-logger";
 import { useUser } from "@/hooks/use-user"
+import { trackActivity, calculateAssignmentPoints, awardPoints } from "@/lib/activity-logger";
+import { ActivityType, ActivityMetadata } from "@/lib/utils/activity-types";
 
 export default function AssignmentSolver() {
   const [assignmentText, setAssignmentText] = useState("")

@@ -18,7 +18,7 @@ from pptx import Presentation  # For PPTX support
 from app.core.shared_state import set_vector_db, add_file_metadata, clear_all, get_vector_db, get_uploaded_metadata
 
 # Flag to disable FAISS vector search - set to False to disable
-USE_VECTOR_SEARCH = False
+USE_VECTOR_SEARCH = os.getenv("USE_VECTOR_SEARCH", "False") == "True"
 
 chat_history = []
 
@@ -66,14 +66,13 @@ def extract_text_from_file(file: UploadFile):
 
 
 def process_files(files: List[UploadFile]):
-    """Process uploaded files into a vector store."""
-    # Clear previous metadata
+    print(f"process_files called with {len(files)} files: {[f.filename for f in files]}")
+    if not files or len(files) == 0:
+        print("No files received in process_files.")
+        raise HTTPException(status_code=400, detail="No files received")
     clear_all()
-
-    # Process each file and save metadata
     for file in files:
-        print(f"Processing file: {file.filename}")
-
+        print(f"Processing file: {file.filename}, type: {file.content_type}")
         # Get file size
         file_size = 0
         try:
@@ -195,23 +194,22 @@ async def sync_document_context():
 # Endpoints
 @app.post("/upload-files/")
 async def upload_files(files: List[UploadFile] = File(...)):
-    """Upload and process files (PDF, TXT, PPTX)."""
     global chat_history
+    if not files or len(files) == 0:
+        print("No files uploaded in request.")
+        return JSONResponse(content={"message": "No files uploaded", "file_count": 0}, status_code=400)
     try:
         result = process_files(files)
-        chat_history = []  # Reset chat history on new upload
-
-        # Sync document context after successful upload
+        chat_history = []
         try:
             await sync_document_context()
         except Exception as sync_err:
             print(f"Warning: Could not sync document context: {sync_err}")
-
         return JSONResponse(content=result)
     except Exception as e:
-        # Provide more detailed error information
         import traceback
         error_detail = f"Error processing files: {str(e)}\n{traceback.format_exc()}"
+        print(error_detail)
         raise HTTPException(status_code=500, detail=error_detail)
 
 

@@ -10,6 +10,8 @@ import json
 from app.core.app_logging import app_logger as logger
 from app.services.gemini_client import call_gemini
 from json_repair import repair_json
+# Add import for activity logging
+from app.endpoints.auth import log_user_activity  # Import the activity logging function
 
 # Initialize router
 router = APIRouter(prefix="/flashcards", tags=["Flashcard Generator"])
@@ -19,6 +21,7 @@ router = APIRouter(prefix="/flashcards", tags=["Flashcard Generator"])
 class FlashcardRequest(BaseModel):
     text: str
     num_flashcards: int = 5
+    user_id: Optional[str] = None  # Add user_id parameter
 
 
 class Flashcard(BaseModel):
@@ -140,11 +143,30 @@ Text: {text}
 
 # --- Endpoints ---
 @router.post("/generate", response_model=FlashcardResponse)
-def generate_flashcards_from_text(request: FlashcardRequest):
+async def generate_flashcards_from_text(request: FlashcardRequest):
     """Generate flashcards from text input."""
     try:
         flashcards_data = generate_flashcards_with_gemini(request.text, request.num_flashcards)
         flashcards = [Flashcard(**fc) for fc in flashcards_data]
+
+        # Log the activity if user_id is provided
+        if request.user_id:
+            try:
+                logger.info(f"Logging flashcard generation for user {request.user_id}")
+                await log_user_activity(
+                    request.user_id,
+                    "flashcards_generated",
+                    {
+                        "num_flashcards": len(flashcards),
+                        "sample_flashcard": flashcards[0].dict() if flashcards else None,
+                        "content_length": len(request.text),
+                        "source": "text"
+                    }
+                )
+            except Exception as log_error:
+                logger.error(f"Failed to log flashcard activity: {log_error}")
+                # Don't fail the request if logging fails
+
         return FlashcardResponse(flashcards=flashcards)
     except Exception as e:
         logger.error(f"Error in /generate flashcards endpoint: {e}")
@@ -152,7 +174,7 @@ def generate_flashcards_from_text(request: FlashcardRequest):
 
 
 @router.post("/upload-pdf", response_model=FlashcardResponse)
-async def upload_pdf_for_flashcards(file: UploadFile = File(...)):
+async def upload_pdf_for_flashcards(file: UploadFile = File(...), user_id: Optional[str] = None):
     """Upload PDF and generate flashcards from its content."""
     if not file.filename or not file.filename.lower().endswith('.pdf'):
         raise HTTPException(status_code=400, detail="Only PDF files are accepted")
@@ -175,6 +197,25 @@ async def upload_pdf_for_flashcards(file: UploadFile = File(...)):
         # Generate flashcards
         flashcards_data = generate_flashcards_with_gemini(text)
         flashcards = [Flashcard(**fc) for fc in flashcards_data]
+
+        # Log the activity if user_id is provided
+        if user_id:
+            try:
+                logger.info(f"Logging PDF flashcard generation for user {user_id}")
+                await log_user_activity(
+                    user_id,
+                    "flashcards_generated",
+                    {
+                        "num_flashcards": len(flashcards),
+                        "sample_flashcard": flashcards[0].dict() if flashcards else None,
+                        "filename": file.filename,
+                        "file_size": file.size,
+                        "source": "pdf"
+                    }
+                )
+            except Exception as log_error:
+                logger.error(f"Failed to log flashcard PDF activity: {log_error}")
+                # Don't fail the request if logging fails
 
         return FlashcardResponse(flashcards=flashcards)
     except HTTPException as e:

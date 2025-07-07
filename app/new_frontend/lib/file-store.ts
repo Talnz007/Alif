@@ -74,7 +74,6 @@ export const useFileStore = create<FileState>()(
       isLoading: false,
       error: null,
 
-      // Rest of the implementation remains unchanged...
       setFiles: (files) => set({ files }),
       addFile: (file) => set((state) => ({ files: [...state.files, file] })),
       removeFile: (fileId) => set((state) => ({
@@ -96,123 +95,30 @@ export const useFileStore = create<FileState>()(
       setLoading: (loading) => set({ isLoading: loading }),
       setError: (error) => set({ error }),
 
+      // Modified to avoid API calls since they're not working
       fetchFiles: async () => {
-        const { setLoading, setFiles, setError } = get()
-        setLoading(true)
-        setError(null)
-
-        try {
-          const response = await fetch("http://localhost:8000/files/list")
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`)
-          }
-
-          const data = await response.json()
-          setFiles(data.files || [])
-        } catch (error) {
-          console.error("Error loading files:", error)
-          setError(`Failed to load files: ${error instanceof Error ? error.message : String(error)}`)
-        } finally {
-          setLoading(false)
-        }
+        console.log("File API is currently disabled");
+        // Return empty array instead of making API call
+        set({ files: [], isLoading: false, error: null });
+        return;
       },
 
       uploadFile: async (file: File) => {
-        const { setLoading, fetchFiles, setError } = get()
-        setLoading(true)
-        setError(null)
-
-        try {
-          const formData = new FormData()
-          formData.append("file", file)
-
-          const response = await fetch("http://localhost:8000/files/upload", {
-            method: "POST",
-            body: formData
-          })
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`)
-          }
-
-          await fetchFiles()
-          return await response.json()
-        } catch (error) {
-          console.error("Error uploading file:", error)
-          setError(`Failed to upload file: ${error instanceof Error ? error.message : String(error)}`)
-          throw error
-        } finally {
-          setLoading(false)
-        }
+        console.log("File upload is currently disabled");
+        // Mock response instead of making API call
+        return ;
       },
 
       deleteFile: async (fileId: string) => {
-        const { setLoading, fetchFiles, setError } = get()
-        setLoading(true)
-        setError(null)
-
-        try {
-          const response = await fetch(`http://localhost:8000/files/${fileId}`, {
-            method: "DELETE"
-          })
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`)
-          }
-
-          await fetchFiles()
-        } catch (error) {
-          console.error("Error deleting file:", error)
-          setError(`Failed to delete file: ${error instanceof Error ? error.message : String(error)}`)
-          throw error
-        } finally {
-          setLoading(false)
-        }
+        console.log("File deletion is currently disabled");
+        // Do nothing instead of making API call
+        return;
       },
 
       getFileContent: async (fileId: string) => {
-        const { files, setLoading, setError } = get()
-        const file = files.find(f => f.id === fileId)
-
-        if (!file) {
-          throw new Error(`File not found: ${fileId}`)
-        }
-
-        if (file.content) {
-          return file.content
-        }
-
-        setLoading(true)
-        setError(null)
-
-        try {
-          const response = await fetch(`http://localhost:8000/files/${fileId}/content`)
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`)
-          }
-
-          const data = await response.json()
-          const content = data.content
-
-          set({
-            files: files.map(f =>
-              f.id === fileId ? { ...f, content } : f
-            ),
-            selectedFile: file.id === get().selectedFile?.id
-              ? { ...file, content }
-              : get().selectedFile
-          })
-
-          return content
-        } catch (error) {
-          console.error("Error getting file content:", error)
-          setError(`Failed to get file content: ${error instanceof Error ? error.message : String(error)}`)
-          throw error
-        } finally {
-          setLoading(false)
-        }
+        console.log("File content fetching is currently disabled");
+        // Return empty content
+        return "";
       }
     }),
     {
