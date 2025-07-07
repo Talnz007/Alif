@@ -84,6 +84,10 @@ export default function StudioChatPanel() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
+  // Add state for recommended videos
+  const [recommendedVideos, setRecommendedVideos] = useState<{ title: string; url: string }[]>([]);
+  const [isFetchingVideos, setIsFetchingVideos] = useState(false);
+
   // Debug log function
   const debugLog = (message: string, data?: any) => {
     console.log(`[StudioChatPanel] ${message}`, data || '')
@@ -376,6 +380,39 @@ export default function StudioChatPanel() {
     }
   }
 
+  // Helper to get the latest user message
+  const getLatestUserMessage = () => {
+    const userMessages = messages.filter(m => m.role === "user" && m.type === "text");
+    return userMessages.length > 0 ? userMessages[userMessages.length - 1].content : "";
+  };
+
+  // Fetch recommendations when latest user message changes or files are uploaded
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      const context = getLatestUserMessage();
+      if (!context) {
+        setRecommendedVideos([]);
+        return;
+      }
+      setIsFetchingVideos(true);
+      try {
+        const response = await fetch("/api/recommendations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: context }),
+        });
+        const data = await response.json();
+        setRecommendedVideos(data.videos || []);
+      } catch (err) {
+        setRecommendedVideos([]);
+      } finally {
+        setIsFetchingVideos(false);
+      }
+    };
+    fetchRecommendations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
+
   // Layout: flex for desktop, stacked for mobile
   return (
     <div className="flex flex-col md:flex-row h-full w-full">
@@ -534,6 +571,24 @@ export default function StudioChatPanel() {
                 </div>
               ) : (
                 <div className="text-sm text-muted-foreground">No knowledge base connected</div>
+              )}
+            </div>
+            <div>
+              <h4 className="font-medium mb-2">Recommended YouTube Videos</h4>
+              {isFetchingVideos ? (
+                <div className="text-sm text-muted-foreground">Loading recommendations...</div>
+              ) : recommendedVideos.length === 0 ? (
+                <div className="text-sm text-muted-foreground">No recommendations yet</div>
+              ) : (
+                <ul className="space-y-2">
+                  {recommendedVideos.map((video, idx) => (
+                    <li key={idx}>
+                      <a href={video.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                        {video.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
           </div>

@@ -4,8 +4,9 @@ from openai import OpenAI
 from app.core.config import settings
 import requests
 
+from app.core.config import settings
 
-YOUTUBE_API_KEY = 'YOUTUBE_API_KEY'
+YOUTUBE_API_KEY = settings.YOUTUBE_API_KEY
 YOUTUBE_API_URL = 'https://www.googleapis.com/youtube/v3/search'
 
 # Initialize NVIDIA Llama client
