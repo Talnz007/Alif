@@ -18,7 +18,7 @@ from pptx import Presentation  # For PPTX support
 from app.core.shared_state import set_vector_db, add_file_metadata, clear_all, get_vector_db, get_uploaded_metadata
 
 # Flag to disable FAISS vector search - set to False to disable
-USE_VECTOR_SEARCH = False
+USE_VECTOR_SEARCH = True
 
 chat_history = []
 

@@ -75,42 +75,40 @@ export default function QuizGenerator({ onClose }: QuizGeneratorProps) {
   }
 
   const fetchQuestions = async () => {
-    setStage("loading")
-    setError(null)
+  setStage("loading");
+  setError(null);
 
-    try {
-      let response;
+  try {
+    const userId = localStorage.getItem("user_id");
+    let response;
 
-      if (inputMethod === "text") {
-        // Text-based quiz generation
-        response = await fetch("http://127.0.0.1:8000/api/v1/quiz/generate", {
-          method: "POST",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            text: topic || "General knowledge",
-            num_questions: numQuestions,
-            difficulty: difficulty,
-          }),
-        })
+    if (inputMethod === "text") {
+      response = await fetch("http://127.0.0.1:8000/api/v1/quiz/generate", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text: topic || "General knowledge",
+          num_questions: numQuestions,
+          difficulty: difficulty,
+          user_id: userId, // <-- add this line
+        }),
+      });
       } else {
-        // PDF upload quiz generation
-        if (!file) {
-          throw new Error("No PDF file selected")
-        }
+      if (!file) throw new Error("No PDF file selected");
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("num_questions", numQuestions.toString());
+      formData.append("difficulty", difficulty);
+      if (userId) formData.append("user_id", userId); // <-- add this line
 
-        const formData = new FormData()
-        formData.append("file", file)
-        formData.append("num_questions", numQuestions.toString())
-        formData.append("difficulty", difficulty)
-
-        response = await fetch("http://127.0.0.1:8000/api/v1/quiz/upload-pdf", {
-          method: "POST",
-          body: formData,
-        })
-      }
+      response = await fetch("http://127.0.0.1:8000/api/v1/quiz/upload-pdf", {
+        method: "POST",
+        body: formData,
+      });
+    }
 
       if (!response.ok) {
         const errorText = await response.text()

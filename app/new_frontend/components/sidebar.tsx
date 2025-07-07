@@ -14,80 +14,13 @@ import { AlifLogo } from "@/components/ui/logo"
 import Image from "next/image"
 import { useAuth } from '@/contexts/auth-context';
 
-
-
 export default function Sidebar() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
-  const { files, fetchFiles, selectFile } = useFileStore()
   const [isExpanded, setIsExpanded] = useState(true)
 
   const isActive = (path: string) => pathname === path
-
-  // Load files when component mounts
-  useEffect(() => {
-    fetchFiles()
-  }, [fetchFiles])
-
-  // Sort files by most recent first
-  const recentFiles = [...files].sort((a, b) => {
-    return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-  }).slice(0, 5)  // Show only the 5 most recent files
-
-
   const { signOut } = useAuth();
-
-  const getFileIcon = (file: FileInfo) => {
-    switch (file.type) {
-      case "pdf":
-        return <FilePdf className="h-4 w-4" />
-      case "doc":
-        return <FileText className="h-4 w-4" />
-      case "audio":
-        return <FileAudio className="h-4 w-4" />
-      default:
-        return <FileText className="h-4 w-4" />
-    }
-  }
-
-  const getGradientByType = (type: string) => {
-    switch (type) {
-      case "pdf":
-        return "from-red-400 to-red-600"
-      case "doc":
-        return "from-blue-400 to-blue-600"
-      case "audio":
-        return "from-green-400 to-green-600"
-      default:
-        return "from-gray-400 to-gray-600"
-    }
-  }
-
-  const formatFileSize = (bytes: number): string => {
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-  }
-
-  const getTimeSince = (dateString: string): string => {
-    try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true })
-    } catch {
-      return 'Unknown'
-    }
-  }
-
-  const menuItems = [
-    {
-      name: "Study Assistant",
-      icon: Book,
-      path: "/study-assistant",
-      tooltip: "Generate quizzes, flashcards, and summaries",
-    },
-    { name: "Assignments", icon: FileText, path: "/assignments", tooltip: "AI-assisted writing & feedback" },
-    { name: "Progress", icon: Trophy, path: "/progress", tooltip: "View leaderboard, study streaks, and achievements" },
-    { name: "Profile", icon: User, path: "/profile", tooltip: "Manage your profile" },
-  ]
 
   return (
     <div className="relative flex h-full">
@@ -247,57 +180,7 @@ export default function Sidebar() {
             </ul>
           </div>
 
-          {isExpanded && (
-              <div>
-                <div className="flex items-center justify-between px-2 mb-4">
-                  <h2 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                    Recent Files
-                  </h2>
-                  <Link href="/assignments" className="text-xs text-blue-500 hover:underline">
-                    View All
-                  </Link>
-                </div>
-
-                <ScrollArea className="h-48">
-                  <ul className="space-y-1">
-                    {recentFiles.length === 0 ? (
-                        <li className="px-2 py-4 text-center">
-                          <p className="text-sm text-gray-500 dark:text-gray-400">No files yet</p>
-                          <Link
-                              href="/files"
-                              className="text-xs text-blue-500 hover:underline mt-1 inline-block"
-                          >
-                            Upload files
-                          </Link>
-                        </li>
-                    ) : (
-                        recentFiles.map((file) => (
-                            <li key={file.id}>
-                              <button
-                                  className="w-full flex items-center p-2 text-gray-700 dark:text-gray-200 hover:bg-white/10 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200 group"
-                                  onClick={() => {
-                                    selectFile(file.id)
-                                    // Could navigate to the file details page if you have one
-                                  }}
-                              >
-                                <div
-                                    className={`mr-3 flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br ${getGradientByType(file.type)} text-white shadow-lg transition-transform group-hover:scale-110`}>
-                                  {getFileIcon(file)}
-                                </div>
-                                <div className="flex-1 truncate text-left">
-                                  <span className="font-medium block truncate">{file.name}</span>
-                                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                              {formatFileSize(file.size)} • {getTimeSince(file.updated_at)}
-                            </span>
-                                </div>
-                              </button>
-                            </li>
-                        ))
-                    )}
-                  </ul>
-                </ScrollArea>
-              </div>
-          )}
+          {/* Recent Files section removed */}
         </nav>
 
         <div className="mt-auto">
@@ -332,7 +215,7 @@ export default function Sidebar() {
                   "flex items-center p-2 text-red-600 hover:bg-white/10 dark:hover:bg-gray-800/50 rounded-lg mt-2 w-full transition-all duration-200",
                   isExpanded ? "" : "justify-center"
               )}
-              onClick={signOut} // Use the real signOut function from context
+              onClick={signOut}
               title="Sign Out"
           >
             <LogOut className={cn("w-5 h-5", isExpanded ? "mr-3" : "")}/>

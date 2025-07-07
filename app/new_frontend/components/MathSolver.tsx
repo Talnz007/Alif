@@ -167,6 +167,11 @@ export default function MathSolver({ onClose }: { onClose?: () => void }) {
       const formData = new FormData();
       formData.append("file", file);
 
+      const userId = localStorage.getItem("user_id");
+      if (userId) {
+        formData.append("user_id", userId);
+      }
+
       // Send to backend
       const response = await fetch("/api/solve-math-problem", {
         method: "POST",
@@ -182,22 +187,21 @@ export default function MathSolver({ onClose }: { onClose?: () => void }) {
 
       // Log this activity
       try {
-        await fetch("/api/activities/log", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: "1", // Replace with actual user ID from auth context
-            activityType: "math_problem_solved",
-            metadata: {
-              problemType: "math",
-              fileName: file.name,
-              fileSize: file.size
-            }
-          }),
-        });
-      } catch (logError) {
+        if (userId) {
+          await fetch("/api/activities/log", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+              userId,
+              activityType: "math_problem_solved",
+              metadata: {
+                problemType: "math",
+                fileName: file.name,
+                fileSize: file.size
+              }
+            }),
+          });
+        }} catch (logError) {
         console.error("Failed to log activity:", logError);
       }
 

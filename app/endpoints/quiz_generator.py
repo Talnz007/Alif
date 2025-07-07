@@ -10,6 +10,8 @@ import fitz  # PyMuPDF for PDF text extraction
 import os
 import shutil
 from json_repair import repair_json
+# Add import for activity logging
+from app.endpoints.auth import log_user_activity  # Import the activity logging function
 
 router = APIRouter(prefix="/quiz", tags=["Quiz Generator"])
 
@@ -18,6 +20,7 @@ class QuizRequest(BaseModel):
     text: str
     num_questions: int = 5
     difficulty: Optional[str] = "medium"
+    user_id: Optional[str] = None  # Add user_id parameter
 
 
 class Question(BaseModel):
@@ -117,13 +120,33 @@ Text: {text}
 
 
 @router.post("/generate", response_model=QuizResponse)
-def generate_quiz(request: QuizRequest):
+async def generate_quiz(request: QuizRequest):
     """Generate quiz questions using text input."""
     try:
         questions_data = generate_quiz_questions(request.text, request.num_questions, request.difficulty)
 
         # Convert to Pydantic models
         quiz_questions = [Question(**q) for q in questions_data]
+
+        # Log the activity if user_id is provided
+        if request.user_id:
+            try:
+                logger.info(f"Logging quiz generation for user {request.user_id}")
+                await log_user_activity(
+                    request.user_id,
+                    "quiz_generated",
+                    {
+                        "num_questions": len(quiz_questions),
+                        "question_types": [q.question_type for q in quiz_questions],
+                        "sample_question": quiz_questions[0].dict() if quiz_questions else None,
+                        "difficulty": request.difficulty,
+                        "content_length": len(request.text),
+                        "source": "text"
+                    }
+                )
+            except Exception as log_error:
+                logger.error(f"Failed to log quiz activity: {log_error}")
+                # Don't fail the request if logging fails
 
         return QuizResponse(quiz=quiz_questions)
     except Exception as e:
@@ -132,34 +155,50 @@ def generate_quiz(request: QuizRequest):
 
 
 @router.post("/upload-pdf", response_model=QuizResponse)
-async def upload_pdf_for_quiz(file: UploadFile = File(...), num_questions: int = 5, difficulty: str = "medium"):
+async def upload_pdf_for_quiz(
+        file: UploadFile = File(...),
+        num_questions: int = 5,
+        difficulty: str = "medium",
+        user_id: Optional[str] = None
+):
     """Upload PDF and generate quiz questions from its content."""
     if not file.filename.endswith('.pdf'):
         raise HTTPException(status_code=400, detail="Only PDF files are accepted")
 
-    # Create temp directory if it doesn't exist
     os.makedirs("temp", exist_ok=True)
     file_path = f"temp/{file.filename}"
 
     try:
-        # Save the uploaded file
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        # Extract text from PDF
         text = extract_text_from_pdf(file_path)
-
-        # Generate quiz questions
         questions_data = generate_quiz_questions(text, num_questions, difficulty)
-
-        # Convert to Pydantic models
         quiz_questions = [Question(**q) for q in questions_data]
+
+        if user_id:
+            try:
+                logger.info(f"Logging PDF quiz generation for user {user_id}")
+                await log_user_activity(
+                    user_id,
+                    "quiz_generated",
+                    {
+                        "num_questions": len(quiz_questions),
+                        "question_types": [q.question_type for q in quiz_questions],
+                        "sample_question": quiz_questions[0].dict() if quiz_questions else None,
+                        "difficulty": difficulty,
+                        "filename": file.filename,
+                        "file_size": file.size,
+                        "source": "pdf"
+                    }
+                )
+            except Exception as log_error:
+                logger.error(f"Failed to log quiz PDF activity: {log_error}")
 
         return QuizResponse(quiz=quiz_questions)
     except Exception as e:
         logger.error(f"Error processing PDF for quiz: {e}")
         raise HTTPException(status_code=500, detail=f"Error processing PDF: {str(e)}")
     finally:
-        # Clean up the file
         if os.path.exists(file_path):
             os.remove(file_path)

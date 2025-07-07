@@ -134,6 +134,10 @@ async function checkBadgesFrontend(supabase: SupabaseClient, userId: string): Pr
       awardResults.push({ badge: "First Step", awarded: result });
     }
 
+    // NEW: Check for streak-based badges
+    await checkLoginStreakBadges(supabase, userId, awardResults);
+    await checkStudyStreakBadges(supabase, userId, awardResults);
+
     // Document badges
     if (docCount >= 10) {
       const result = await awardBadgeByName(supabase, userId, "Document Guru");
@@ -310,5 +314,228 @@ async function checkBadgeCollectorAchievement(supabase: SupabaseClient, userId: 
     }
   } catch (error) {
     console.error('Error checking badge collector achievements:', error);
+  }
+}
+
+async function checkLoginStreakBadges(supabase: SupabaseClient, userId: string, awardResults: AwardResult[]) {
+  try {
+    // Get login activities ordered by date
+    const { data: loginActivities, error } = await supabase
+      .from('user_activities')
+      .select('created_at')
+      .eq('user_id', userId)
+      .eq('activity_type', 'login')
+      .order('created_at', { ascending: true });
+
+    if (error || !loginActivities || loginActivities.length === 0) {
+      console.log('No login activities found or error:', error);
+      return;
+    }
+
+    // Calculate consecutive days
+    const consecutiveDays = calculateConsecutiveDays(loginActivities.map(a =>
+      new Date(a.created_at)
+    ));
+
+    console.log(`User ${userId} has logged in for ${consecutiveDays} consecutive days`);
+
+    // Award Daily Learner for 7+ consecutive days
+    if (consecutiveDays >= 7) {
+      const result = await awardBadgeByName(supabase, userId, "Daily Learner");
+      awardResults.push({ badge: "Daily Learner", awarded: result });
+    }
+
+    // Award Consistent Learner for 30+ consecutive days
+    if (consecutiveDays >= 30) {
+      const result = await awardBadgeByName(supabase, userId, "Consistent Learner");
+      awardResults.push({ badge: "Consistent Learner", awarded: result });
+    }
+
+    // Track the progress for these badges
+    if (consecutiveDays > 0 && consecutiveDays < 7) {
+      // Update Daily Learner progress
+      await updateBadgeProgress(supabase, userId, "Daily Learner", Math.floor((consecutiveDays / 7) * 100));
+    }
+
+    if (consecutiveDays > 0 && consecutiveDays < 30) {
+      // Update Consistent Learner progress
+      await updateBadgeProgress(supabase, userId, "Consistent Learner", Math.floor((consecutiveDays / 30) * 100));
+    }
+
+  } catch (error) {
+    console.error('Error checking login streak badges:', error);
+  }
+}
+
+// NEW: Check study streak badges
+async function checkStudyStreakBadges(supabase: SupabaseClient, userId: string, awardResults: AwardResult[]) {
+  try {
+    // Get study session activities ordered by date
+    const { data: studyActivities, error } = await supabase
+      .from('user_activities')
+      .select('created_at')
+      .eq('user_id', userId)
+      .in('activity_type', ['study_session_start', 'study_session_end'])
+      .order('created_at', { ascending: true });
+
+    if (error || !studyActivities || studyActivities.length === 0) {
+      console.log('No study activities found or error:', error);
+      return;
+    }
+
+    // Calculate study streaks (days with study sessions)
+    const studyDays = getUniqueDays(studyActivities.map(a => new Date(a.created_at)));
+    const streakLength = calculateLongestStreak(studyDays);
+
+    console.log(`User ${userId} has a study streak of ${streakLength} days`);
+
+    // Award Streak Starter for 3+ day streak
+    if (streakLength >= 3) {
+      const result = await awardBadgeByName(supabase, userId, "Streak Starter");
+      awardResults.push({ badge: "Streak Starter", awarded: result });
+    }
+
+    // Award Streak Master for 10+ day streak
+    if (streakLength >= 10) {
+      const result = await awardBadgeByName(supabase, userId, "Streak Master");
+      awardResults.push({ badge: "Streak Master", awarded: result });
+    }
+
+    // Award Streak Specialist for 30+ day streak
+    if (streakLength >= 30) {
+      const result = await awardBadgeByName(supabase, userId, "Streak Specialist");
+      awardResults.push({ badge: "Streak Specialist", awarded: result });
+    }
+
+    // Track progress for these badges
+    if (streakLength > 0 && streakLength < 3) {
+      await updateBadgeProgress(supabase, userId, "Streak Starter", Math.floor((streakLength / 3) * 100));
+    }
+
+    if (streakLength > 3 && streakLength < 10) {
+      await updateBadgeProgress(supabase, userId, "Streak Master", Math.floor(((streakLength - 3) / 7) * 100));
+    }
+
+    if (streakLength > 10 && streakLength < 30) {
+      await updateBadgeProgress(supabase, userId, "Streak Specialist", Math.floor(((streakLength - 10) / 20) * 100));
+    }
+
+  } catch (error) {
+    console.error('Error checking study streak badges:', error);
+  }
+}
+function calculateConsecutiveDays(dates: Date[]): number {
+  if (!dates || dates.length === 0) return 0;
+
+  // Sort dates and convert to days only
+  const dateStrings = dates
+    .map(d => d.toISOString().split('T')[0])
+    .sort()
+    .filter((v, i, a) => a.indexOf(v) === i); // Remove duplicates
+
+  if (dateStrings.length === 0) return 0;
+
+  // Find the longest streak by checking consecutive days
+  let currentStreak = 1;
+  let maxStreak = 1;
+  let yesterday = new Date(dateStrings[0]);
+
+  for (let i = 1; i < dateStrings.length; i++) {
+    const today = new Date(dateStrings[i]);
+    const diffDays = Math.round((today.getTime() - yesterday.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) {
+      // Consecutive day
+      currentStreak++;
+      maxStreak = Math.max(maxStreak, currentStreak);
+    } else if (diffDays > 1) {
+      // Streak broken
+      currentStreak = 1;
+    }
+
+    yesterday = today;
+  }
+
+  return maxStreak;
+}
+
+// NEW: Helper function to get unique days from a list of dates
+function getUniqueDays(dates: Date[]): string[] {
+  return [...new Set(dates.map(d => d.toISOString().split('T')[0]))].sort();
+}
+
+// NEW: Helper function to calculate the longest streak of consecutive days
+function calculateLongestStreak(dateStrings: string[]): number {
+  if (dateStrings.length === 0) return 0;
+
+  let currentStreak = 1;
+  let maxStreak = 1;
+
+  for (let i = 1; i < dateStrings.length; i++) {
+    const yesterday = new Date(dateStrings[i-1]);
+    const today = new Date(dateStrings[i]);
+    const diffDays = Math.round((today.getTime() - yesterday.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) {
+      currentStreak++;
+      maxStreak = Math.max(maxStreak, currentStreak);
+    } else if (diffDays > 1) {
+      currentStreak = 1;
+    }
+  }
+
+  return maxStreak;
+}
+
+// NEW: Helper function to update badge progress
+async function updateBadgeProgress(
+  supabase: SupabaseClient,
+  userId: string,
+  badgeName: string,
+  progress: number
+): Promise<void> {
+  try {
+    // Get badge ID
+    const { data: badge, error: badgeError } = await supabase
+      .from('badges')
+      .select('id')
+      .eq('name', badgeName)
+      .single();
+
+    if (badgeError || !badge) {
+      console.error(`Badge "${badgeName}" not found:`, badgeError);
+      return;
+    }
+
+    // Check if user already has this badge
+    const { data: existingBadge, error: existingError } = await supabase
+      .from('user_badges')
+      .select('id, is_earned, progress')
+      .eq('user_id', userId)
+      .eq('badge_id', badge.id)
+      .single();
+
+    if (existingError && existingError.code === 'PGRST116') {
+      // Badge doesn't exist for user yet, create it
+      await supabase
+        .from('user_badges')
+        .insert({
+          user_id: userId,
+          badge_id: badge.id,
+          is_earned: false,
+          progress: progress,
+          notification_shown: false
+        });
+    } else if (!existingError && !existingBadge.is_earned) {
+      // Update progress only if not earned yet and new progress is higher
+      if (existingBadge.progress < progress) {
+        await supabase
+          .from('user_badges')
+          .update({ progress: progress })
+          .eq('id', existingBadge.id);
+      }
+    }
+  } catch (error) {
+    console.error(`Error updating progress for badge ${badgeName}:`, error);
   }
 }
