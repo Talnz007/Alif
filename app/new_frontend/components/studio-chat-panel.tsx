@@ -278,12 +278,17 @@ export default function StudioChatPanel() {
         throw new Error(errorData.detail || "Failed to upload files")
       }
       const result = await response.json()
+      await fetchDocumentContext();
+      // Fetch the latest active files directly for accurate count
+      const filesUrl = `${API_BASE_URL}/document-context/active-files`;
+      const filesResponse = await fetch(filesUrl);
+      const filesData = await filesResponse.json();
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now().toString(),
           role: "assistant",
-          content: `I've processed ${files.length} file(s). What would you like to know about them?`,
+          content: `I've processed ${filesData.length} file(s). What would you like to know about them?`,
           timestamp: new Date(),
           type: "text",
         },
@@ -413,6 +418,8 @@ export default function StudioChatPanel() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
+  const chatDisabled = activeFiles.length === 0;
+
   // Layout: flex for desktop, stacked for mobile
   return (
     <div className="flex flex-col md:flex-row h-full w-full">
@@ -490,8 +497,24 @@ export default function StudioChatPanel() {
               <Button variant="outline" size="icon" onClick={() => fileInputRef.current?.click()} title="Upload files" disabled={isProcessingFiles || isChatLoading} className="bg-white/50 dark:bg-gray-800/50 hover:bg-white/70 dark:hover:bg-gray-800/70">
                 <Paperclip className="h-4 w-4" />
               </Button>
-              <Textarea value={input} onChange={(e) => setInput(e.target.value)} placeholder="Ask about your documents..." className="flex-1 min-h-[44px] max-h-32 input-gradient" disabled={isChatLoading} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); } }} />
-              <Button onClick={handleSend} disabled={!input.trim() || isChatLoading || isProcessingFiles} className="bg-blue-600/90 hover:bg-blue-600 transition-colors duration-200">
+              <Textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={chatDisabled ? "Upload a document to start chatting..." : "Ask about your documents..."}
+                className="flex-1 min-h-[44px] max-h-32 input-gradient"
+                disabled={isChatLoading || chatDisabled}
+                onKeyDown={(e) => {
+                  if (!chatDisabled && e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+              />
+              <Button
+                onClick={handleSend}
+                disabled={!input.trim() || isChatLoading || isProcessingFiles || chatDisabled}
+                className="bg-blue-600/90 hover:bg-blue-600 transition-colors duration-200"
+              >
                 <Send className="h-4 w-4" />
               </Button>
             </div>

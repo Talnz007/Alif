@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const API_URL =  "http://127.0.0.1:8000/api/v1/auth";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1/auth";
 
 export async function POST(request: NextRequest) {
   try {
