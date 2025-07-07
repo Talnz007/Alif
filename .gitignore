@@ -57,3 +57,5 @@ master
 # FastAPI specific
 .pytest_cache/
 
+tati/
+
