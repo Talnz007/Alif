@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     // Use the backend API to solve the math problem
     // Construct URL from environment variable
-    const apiBaseUrl = "http://localhost:8000/api/v1";
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
     const backendUrl = `${apiBaseUrl}/math-solver/solve`;
 
     console.log(`Sending request to math solver API: ${backendUrl}`);

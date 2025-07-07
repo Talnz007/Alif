@@ -23,13 +23,6 @@ const authRoutes = [
 const publicRoutes = [
   '/',           // Landing page
   '/register',   // Registration page is also public
-  '/login',      // Login page'/chat',
-  '/study-assistant',
-  '/dashboard',
-  '/profile',
-  '/progress',
-  '/badges',
-  '/assignments',
 ]
 
 export function middleware(request: NextRequest) {
@@ -81,5 +74,5 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/((?!_next/static|_next/image|favicon.ico|images|api).*)',
-  ],
+  ],
 }
