@@ -23,6 +23,13 @@ const authRoutes = [
 const publicRoutes = [
   '/',           // Landing page
   '/register',   // Registration page is also public
+  '/login',      // Login page'/chat',
+  '/study-assistant',
+  '/dashboard',
+  '/profile',
+  '/progress',
+  '/badges',
+  '/assignments',
 ]
 
 export function middleware(request: NextRequest) {
