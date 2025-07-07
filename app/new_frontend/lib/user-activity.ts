@@ -1,4 +1,6 @@
 import { ActivityType } from '@/lib/utils/activity-types';
+import { standardizeActivityType } from '@/lib/utils/activity-constants';
+
 
 /**
  * Log a user activity with the backend
@@ -16,6 +18,19 @@ export async function logUserActivity(
       return { success: false };
     }
 
+    // Standardize activity type to ensure backend compatibility
+    const typeValue = typeof activityType === 'string'
+      ? activityType
+      : String(activityType);
+
+    const standardizedType = standardizeActivityType(typeValue);
+
+    // Log the conversion for debugging
+    if (standardizedType !== typeValue) {
+      console.log(`Converting activity type: ${typeValue} → ${standardizedType}`);
+    }
+
+    // Rest of the function remains the same, but use standardizedType
     const response = await fetch('/api/activities/log', {
       method: 'POST',
       headers: {
@@ -23,7 +38,7 @@ export async function logUserActivity(
       },
       body: JSON.stringify({
         userId,
-        activityType,
+        activityType: standardizedType, // Use standardized type
         metadata
       })
     });

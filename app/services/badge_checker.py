@@ -2,6 +2,31 @@ from typing import List, Dict, Any
 from app.services.badges_service import BadgeService
 from app.core.app_logging import app_logger
 
+# Mapping between different activity type variations
+ACTIVITY_TYPE_MAPPING = {
+    # Login activities
+    "login": ["login", "user_login"],  # Accept both variations
+
+    # Content activities
+    "audio_processed": ["audio_processed", "audio_uploaded"],
+    "document_analyzed": ["document_analyzed", "document_uploaded"],
+    "text_summarized": ["text_summarized"],  # This one matches already
+
+    # Goal activities
+    "goal_created": ["goal_created", "goal_set"],
+    "goal_achieved": ["goal_achieved", "goal_completed"],
+
+    # No changes needed for these
+    "question_asked": ["question_asked"],
+    "leaderboard_updated": ["leaderboard_updated"],
+
+    # New activity types
+    "math_problem_solved": ["math_problem_solved"],
+    "quiz_generated": ["quiz_generated"],
+    "quiz_completed": ["quiz_completed"],
+    "flashcards_generated": ["flashcards_generated"]
+}
+
 # Complete badge criteria for all 20 badges
 BADGE_CRITERIA = {
     # Login and first-time badges
@@ -52,6 +77,9 @@ class BadgeChecker:
         awarded_badges = []
         metadata = metadata or {}
 
+        # Log received activity type
+        app_logger.info(f"Checking badges for activity: {activity_type}")
+
         # First get user's current badges to avoid duplicates
         current_badges = await self.badge_service.get_user_badges(user_id)
         current_badge_ids = [badge["id"] for badge in current_badges]
@@ -63,35 +91,44 @@ class BadgeChecker:
                 continue
 
             # Check activity count badges
-            if "activity_type" in criteria and criteria["activity_type"] == activity_type:
-                try:
-                    # Simple count check
-                    if "count" in criteria:
-                        count = await self._get_activity_count(user_id, activity_type)
-                        if count >= criteria["count"]:
-                            success = await self.badge_service.award_badge(user_id, badge_id)
-                            if success:
-                                awarded_badges.append({
-                                    "id": badge_id,
-                                    "name": criteria["name"]
-                                })
+            if "activity_type" in criteria:
+                criteria_type = criteria["activity_type"]
+                # Check if the current activity matches any variation of the criteria type
+                if any(activity_type == variation for variation in
+                       ACTIVITY_TYPE_MAPPING.get(criteria_type, [criteria_type])):
+                    try:
+                        # Simple count check
+                        if "count" in criteria:
+                            count = await self._get_activity_count(user_id, criteria_type)
+                            app_logger.info(f"Badge {badge_id}: counted {count} activities of type {criteria_type}")
+                            if count >= criteria["count"]:
+                                success = await self.badge_service.award_badge(user_id, badge_id)
+                                if success:
+                                    awarded_badges.append({
+                                        "id": badge_id,
+                                        "name": criteria["name"]
+                                    })
+                                    app_logger.info(f"Awarded badge {criteria['name']} to user {user_id}")
 
-                    # Consecutive days check for login badges
-                    elif "consecutive_days" in criteria:
-                        consecutive_days = await self._check_consecutive_days(user_id, activity_type,
-                                                                              criteria["consecutive_days"])
-                        if consecutive_days >= criteria["consecutive_days"]:
-                            success = await self.badge_service.award_badge(user_id, badge_id)
-                            if success:
-                                awarded_badges.append({
-                                    "id": badge_id,
-                                    "name": criteria["name"]
-                                })
-                except Exception as e:
-                    app_logger.error(f"Error checking badge {badge_id}: {str(e)}")
+                        # Consecutive days check for login badges
+                        elif "consecutive_days" in criteria:
+                            consecutive_days = await self._check_consecutive_days(user_id, criteria_type,
+                                                                                  criteria["consecutive_days"])
+                            app_logger.info(
+                                f"Badge {badge_id}: found {consecutive_days} consecutive days for {criteria_type}")
+                            if consecutive_days >= criteria["consecutive_days"]:
+                                success = await self.badge_service.award_badge(user_id, badge_id)
+                                if success:
+                                    awarded_badges.append({
+                                        "id": badge_id,
+                                        "name": criteria["name"]
+                                    })
+                                    app_logger.info(f"Awarded badge {criteria['name']} to user {user_id}")
+                    except Exception as e:
+                        app_logger.error(f"Error checking badge {badge_id}: {str(e)}")
 
         # Check streak badges if relevant
-        if activity_type in ["login", "study_session", "assignment_completed"]:
+        if activity_type in ["login", "user_login", "study_session", "assignment_completed"]:
             await self._check_streak_badges(user_id, current_badge_ids, awarded_badges)
 
         # Check leaderboard badges if relevant
@@ -107,34 +144,63 @@ class BadgeChecker:
         return awarded_badges
 
     async def _get_activity_count(self, user_id: str, activity_type: str) -> int:
-        """Get count of a specific activity for user"""
+        """Get count of a specific activity for user, handling multiple variations"""
         try:
+            # Get the possible variations of this activity type
+            activity_variations = ACTIVITY_TYPE_MAPPING.get(activity_type, [activity_type])
+
+            # If only one variation, use direct query
+            if len(activity_variations) == 1:
+                result = self.db.table('user_activities') \
+                    .select("id", count="exact") \
+                    .eq("user_id", user_id) \
+                    .eq("activity_type", activity_variations[0]) \
+                    .execute()
+                return result.count or 0
+
+            # For multiple variations, we need to use OR filters
+            filter_string = ",".join([f"activity_type.eq.{variation}" for variation in activity_variations])
             result = self.db.table('user_activities') \
                 .select("id", count="exact") \
                 .eq("user_id", user_id) \
-                .eq("activity_type", activity_type) \
+                .or_(filter_string) \
                 .execute()
 
+            app_logger.info(
+                f"Counted activities for {activity_type}: {result.count} (variations: {activity_variations})")
             return result.count or 0
+
         except Exception as e:
             app_logger.error(f"Error counting activities: {str(e)}")
             return 0
 
     async def _check_consecutive_days(self, user_id: str, activity_type: str, days: int) -> int:
-        """Check consecutive days of a specific activity"""
+        """Check consecutive days of a specific activity, handling multiple variations"""
         try:
-            # Get all activities of the specified type
-            result = self.db.table('user_activities') \
-                .select("timestamp") \
-                .eq("user_id", user_id) \
-                .eq("activity_type", activity_type) \
-                .order("timestamp", desc=True) \
-                .execute()
+            # Get the possible variations of this activity type
+            activity_variations = ACTIVITY_TYPE_MAPPING.get(activity_type, [activity_type])
+
+            # Query for all variations
+            if len(activity_variations) == 1:
+                result = self.db.table('user_activities') \
+                    .select("timestamp") \
+                    .eq("user_id", user_id) \
+                    .eq("activity_type", activity_variations[0]) \
+                    .order("timestamp", desc=True) \
+                    .execute()
+            else:
+                filter_string = ",".join([f"activity_type.eq.{variation}" for variation in activity_variations])
+                result = self.db.table('user_activities') \
+                    .select("timestamp") \
+                    .eq("user_id", user_id) \
+                    .or_(filter_string) \
+                    .order("timestamp", desc=True) \
+                    .execute()
 
             if not result.data:
                 return 0
 
-            # Group activities by day
+            # Group activities by day (rest of the method remains the same)
             days_active = set()
             for item in result.data:
                 timestamp = item.get("timestamp", "")

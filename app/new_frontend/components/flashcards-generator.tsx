@@ -117,21 +117,22 @@ export default function FlashcardsGenerator({ onClose }: FlashcardsGeneratorProp
   }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    // Check if file is PDF
-    if (file.type !== "application/pdf") {
-      setErrorMessage("Please upload a PDF file")
-      return
-    }
+  const file = e.target.files?.[0];
+  if (!file) return;
+  if (file.type !== "application/pdf") {
+    setErrorMessage("Please upload a PDF file");
+    return;
+  }
 
     setIsLoading(true)
     setErrorMessage(null)
 
     try {
+      const userId = localStorage.getItem("user_id");
       const formData = new FormData()
       formData.append("file", file)
+
+      if (userId) formData.append("user_id", userId);
 
       // Connect to FastAPI backend - using the new unified endpoint
       const response = await fetch("http://localhost:8000/api/v1/flashcards/upload-pdf", {
@@ -158,25 +159,25 @@ export default function FlashcardsGenerator({ onClose }: FlashcardsGeneratorProp
   }
 
   const handlePromptSubmit = async () => {
-    if (!promptText.trim()) {
-      setErrorMessage("Please enter some text to generate flashcards")
-      return
-    }
+  if (!promptText.trim()) {
+    setErrorMessage("Please enter some text to generate flashcards");
+    return;
+  }
 
-    setIsLoading(true)
-    setErrorMessage(null)
+  setIsLoading(true);
+  setErrorMessage(null);
 
-    try {
-      const response = await fetch("http://localhost:8000/api/v1/flashcards/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          text: promptText,
-          num_flashcards: numFlashcards
-        }),
-      })
+  try {
+    const userId = localStorage.getItem("user_id");
+    const response = await fetch("http://localhost:8000/api/v1/flashcards/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: promptText,
+        num_flashcards: numFlashcards,
+        user_id: userId, // <-- add this line
+      }),
+    });
 
       if (!response.ok) {
         throw new Error(`Server responded with ${response.status}`)

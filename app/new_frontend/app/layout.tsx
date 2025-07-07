@@ -2,6 +2,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import ClientLayout from "@/components/client-layout"
 import { AuthProvider } from "@/contexts/auth-context"
+import { UserProvider } from "@/hooks/use-user" // Add this import
 import { Toaster } from "@/components/ui/toaster"
 import BadgeTracker from "@/components/badge-tracker"
 
@@ -16,11 +17,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <AuthProvider>
-          <BadgeTracker /> {/* Add this line to show badge notifications */}
-          <ClientLayout>
-            {children}
-          </ClientLayout>
-          <Toaster />
+          <UserProvider> {/* Add this wrapper */}
+            <BadgeTracker />
+            <ClientLayout>
+              {children}
+            </ClientLayout>
+            <Toaster />
+          </UserProvider>
         </AuthProvider>
       </body>
     </html>

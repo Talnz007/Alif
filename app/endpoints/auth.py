@@ -146,16 +146,20 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         print(f"Login error: {e}")  # Log any exceptions
         raise CustomHTTPException(str(e))
 
-async def log_user_activity(user_id: str, activity_type: str) -> None:
+async def log_user_activity(user_id: str, activity_type: str, metadata: dict = None) -> None:
     """Log user activity to the database"""
     try:
         # Convert user_id to valid UUID format
         valid_uuid = ensure_uuid(user_id)
 
-        supabase_db.table('user_activities').insert({
+        insert_data = {
             "user_id": str(valid_uuid),  # Convert UUID to string for Supabase
             "activity_type": activity_type
-        }).execute()
+        }
+        if metadata:
+            insert_data["metadata"] = metadata  # Store metadata as a JSON/object column in your DB
+
+        supabase_db.table('user_activities').insert(insert_data).execute()
     except Exception as e:
         # Log error but don't fail the request
         print(f"Failed to log activity: {str(e)}")

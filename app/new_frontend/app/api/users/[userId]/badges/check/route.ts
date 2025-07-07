@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ensureUuid, debugUuid } from '@/lib/utils/uuid-helper';
+import { cookies } from 'next/headers';
 
 export async function POST(
   request: NextRequest,
@@ -19,23 +20,51 @@ export async function POST(
 
     console.log('🎯 Checking badges for user:', userId, 'activity:', activityType);
 
-    // Get auth token from request headers (if user is authenticated)
-    const authHeader = request.headers.get('authorization');
-
-    // REMOVE localStorage call - it doesn't exist on server
+    // Comprehensive token collection from multiple sources
     let authToken = null;
 
+    // 1. Check request authorization header
+    const authHeader = request.headers.get('authorization');
     if (authHeader && authHeader.startsWith('Bearer ')) {
       authToken = authHeader.substring(7);
+      console.log('🔑 Found auth token in Authorization header');
     }
 
-    // Try getting token from cookies
+    // 2. Check cookies with the new async method
     if (!authToken) {
-      const cookies = request.cookies;
-      const tokenCookie = cookies.get('auth_token');
-      if (tokenCookie) {
-        authToken = tokenCookie.value;
+      // Get all cookies - using the correct async method
+      const cookieStore = await cookies();
+
+      // Try multiple possible cookie names
+      const possibleCookieNames = [
+        'auth_token',                // Standard name
+        'sb-access-token',           // Supabase specific
+        'access_token',              // Common name
+        'token',                     // Generic
+        `sb-${process.env.NEXT_PUBLIC_SUPABASE_URL?.match(/\/\/([^\.]+)/)?.[1]}-auth-token` // Dynamic Supabase format
+      ];
+
+      for (const cookieName of possibleCookieNames) {
+        const cookie = cookieStore.get(cookieName);
+        if (cookie?.value) {
+          try {
+            // Some cookies store JSON with the token inside
+            const parsedValue = JSON.parse(cookie.value);
+            authToken = parsedValue.access_token || parsedValue.token || cookie.value;
+          } catch {
+            // If not JSON, use the raw value
+            authToken = cookie.value;
+          }
+          console.log(`🍪 Found auth token in cookie: ${cookieName}`);
+          break;
+        }
       }
+    }
+
+    // 3. Check for token in request body if it was explicitly provided
+    if (!authToken && metadata?.authToken) {
+      authToken = metadata.authToken;
+      console.log('📦 Found auth token in request metadata');
     }
 
     // Call your Python backend for badge checking
@@ -48,10 +77,13 @@ export async function POST(
 
     // Add auth header if we have a token
     if (authToken) {
+      // Try both Authorization formats to be safe
       headers['Authorization'] = `Bearer ${authToken}`;
       console.log('🔐 Adding auth token to Python backend request');
     } else {
       console.warn('⚠️ No auth token available for Python backend request');
+      // Try to add user ID in header as alternative authentication
+      headers['X-User-ID'] = userId;
     }
 
     const requestBody = {

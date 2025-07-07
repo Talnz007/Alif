@@ -44,6 +44,7 @@ app/core/logs/
 *.swp
 *.swo
 *~
+tati/
 
 # OS
 .DS_Store
