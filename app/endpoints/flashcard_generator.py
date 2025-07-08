@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException
+from fastapi import APIRouter, File, UploadFile, HTTPException, Form
 from pydantic import BaseModel
 from typing import List, Optional, Dict
 import fitz  # PyMuPDF for PDF text extraction
@@ -174,7 +174,7 @@ async def generate_flashcards_from_text(request: FlashcardRequest):
 
 
 @router.post("/upload-pdf", response_model=FlashcardResponse)
-async def upload_pdf_for_flashcards(file: UploadFile = File(...), user_id: Optional[str] = None):
+async def upload_pdf_for_flashcards(file: UploadFile = File(...), user_id: Optional[str] = Form(None)):
     """Upload PDF and generate flashcards from its content."""
     if not file.filename or not file.filename.lower().endswith('.pdf'):
         raise HTTPException(status_code=400, detail="Only PDF files are accepted")

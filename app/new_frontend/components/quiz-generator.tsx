@@ -211,6 +211,45 @@ export default function QuizGenerator({ onClose }: QuizGeneratorProps) {
     }, 1500)
   }
 
+
+  const submitQuizResults = async () => {
+    const userId = localStorage.getItem("user_id");
+    if (!userId) return;
+
+    const payload = {
+      user_id: userId,
+      score: correctAnswers,
+      total_questions: questions.length,
+      correct_answers: correctAnswers,
+      answers: answers.map((a, idx) => ({
+        question: questions[idx].question,
+        userAnswer: a.userAnswer,
+        correct: a.correct,
+        correctAnswer: questions[idx].correctAnswer,
+      })),
+      source: inputMethod === "pdf" ? "pdf" : "text",
+      filename: file ? file.name : undefined,
+    };
+
+    try {
+      await fetch("http://127.0.0.1:8000/api/v1/quiz/submit", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(payload),
+      });
+    } catch (err) {
+      console.error("Failed to log quiz completion:", err);
+    }
+  };
+
+// In your component, add this effect so it's called when the results screen is reached
+  useEffect(() => {
+    if (stage === "results") {
+      submitQuizResults();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage]);
+
   const restartQuiz = () => {
     setStage("setup")
     setCurrentQuestionIndex(0)

@@ -202,3 +202,37 @@ async def upload_pdf_for_quiz(
     finally:
         if os.path.exists(file_path):
             os.remove(file_path)
+
+class QuizResultRequest(BaseModel):
+    user_id: str
+    score: int
+    total_questions: int
+    correct_answers: int
+    answers: list  # list of {"question", "userAnswer", "correct", "correctAnswer"}
+    source: str = "text"  # or "pdf"
+    filename: str = None  # optional
+
+
+@router.post("/submit", status_code=201)
+async def submit_quiz_result(request: QuizResultRequest):
+    """Log quiz completion and result for a user."""
+    try:
+        metadata = {
+            "score": request.score,
+            "total_questions": request.total_questions,
+            "correct_answers": request.correct_answers,
+            "answers": request.answers,
+            "source": request.source
+        }
+        if request.filename:
+            metadata["filename"] = request.filename
+
+        await log_user_activity(
+            request.user_id,
+            "quiz_completed",
+            metadata
+        )
+        return {"success": True}
+    except Exception as e:
+        logger.error(f"Error logging quiz result: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
