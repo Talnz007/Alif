@@ -23,11 +23,6 @@ const supabaseServiceKey = isServer ? process.env.SUPABASE_SERVICE_ROLE_KEY : un
 export const supabaseAdmin = isServer && supabaseServiceKey
   ? createClient(supabaseUrl, supabaseServiceKey)
   : null
-// Only create the admin client on the server
-export const supabaseAdmin =
-  typeof window === 'undefined' && process.env.SUPABASE_SERVICE_ROLE_KEY
-    ? createClient(supabaseUrl, process.env.SUPABASE_SERVICE_ROLE_KEY)
-    : null
 
 // Helper to return the appropriate client
 export async function supabaseServerClient() {
