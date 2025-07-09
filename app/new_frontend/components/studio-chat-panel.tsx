@@ -527,14 +527,6 @@ export default function StudioChatPanel() {
           <div className="flex flex-col mb-4">
             <h3 className="text-lg font-medium mb-3">Document Context</h3>
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm" onClick={forceRefresh} disabled={isRefreshing} className="h-8 flex items-center" title="Force refresh from vector DB">
-                <RotateCw className="h-4 w-4 mr-1.5" />
-                <span className="text-xs">Force Refresh</span>
-              </Button>
-              <Button variant="outline" size="sm" onClick={createTestData} className="h-8 flex items-center" title="Create test data (debug only)">
-                <Bug className="h-4 w-4 mr-1.5" />
-                <span className="text-xs">Debug</span>
-              </Button>
               <Button variant="outline" size="sm" onClick={resetContext} disabled={isClearing} className="h-8 flex items-center" title="Clear document context">
                 <Trash2 className="h-4 w-4 mr-1.5" />
                 <span className="text-xs">Clear</span>
