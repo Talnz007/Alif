@@ -184,6 +184,20 @@ export default function Sidebar() {
         </nav>
 
         <div className="mt-auto">
+          {/* Profile Link - above Dark Mode */}
+          <Link
+            href="/profile"
+            className={cn(
+              "flex items-center p-2 text-gray-700 dark:text-gray-200 hover:bg-white/10 dark:hover:bg-gray-800/50 rounded-lg transition-all duration-200 mb-2",
+              isActive("/profile") ? "bg-white/20 dark:bg-gray-800/50" : "",
+              isExpanded ? "" : "justify-center"
+            )}
+            title="Profile"
+          >
+            <User className={cn("w-5 h-5", isExpanded ? "mr-3" : "")}/>
+            {isExpanded && "Profile"}
+          </Link>
+
           {isExpanded ? (
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Dark Mode</span>
