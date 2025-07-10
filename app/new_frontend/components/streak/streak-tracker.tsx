@@ -5,8 +5,6 @@ import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Trophy, Star, Target } from "lucide-react"
 import { StreakData } from "../dashboard"
-import { UserActivity } from '@/lib/user-activity';
-import { useEffect } from 'react';
 
 interface BadgeDisplay {
   icon: any
@@ -37,17 +35,6 @@ export default function StreakTracker({ data }: { data?: StreakData }) {
   if (streakData.current >= 7) {
     badges[0].achieved = true
   }
-  useEffect(() => {
-  // When the streak tracker is shown, log a study session activity
-  // This will help track streaks for the streak badges
-  const trackStudyActivity = async () => {
-    if (streakData.todayCompleted) {
-      await UserActivity.endStudySession(60); // Assuming 60 mins of study
-    }
-  };
-
-  trackStudyActivity();
-  }, []);
 
   return (
     <div className="p-4 space-y-4">

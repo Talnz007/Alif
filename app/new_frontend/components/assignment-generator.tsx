@@ -14,6 +14,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { useUser } from "@/hooks/use-user"
 import { trackActivity, awardPoints } from "@/lib/activity-logger"
 import { ToastAction } from "@/components/ui/toast"
+import { ActivityType, ActivityMetadata } from "@/lib/utils/activity-types";
 
 // Interface definitions
 interface AssignmentTask {
@@ -60,6 +61,7 @@ export default function AssignmentGenerator() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(user?.id ? {"x-user-id": user.id} : {})
         },
         body: JSON.stringify({
           text: topic,

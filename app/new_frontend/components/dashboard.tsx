@@ -57,10 +57,8 @@ interface Badge {
 }
 
 export default function Dashboard() {
-  // Get real authenticated user
+  // 🟢 ALL HOOKS AT THE TOP (before any return)
   const { user, loading: userLoading, error: userError } = useUser();
-
-  // Use real user ID or null if not authenticated
   const userId = user?.id || null;
 
   const [isLoading, setIsLoading] = useState(true)
@@ -73,56 +71,15 @@ export default function Dashboard() {
   const { toast } = useToast()
   const { BadgeNotificationComponent, showBadgeNotification } = useBadgeNotification()
 
-  // Refs to prevent loops and multiple calls
   const hasInitialized = useRef(false)
   const badgeCheckInProgress = useRef(false)
   const initialDataLoaded = useRef(false)
 
-  // Show loading while waiting for user auth to resolve
-  if (userLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[70vh]">
-        <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
-        <p className="text-lg">Loading authentication...</p>
-      </div>
-    );
-  }
-
-  // Show error if user auth failed
-  if (userError) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[70vh]">
-        <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-        <p className="text-lg text-red-600 dark:text-red-400">Authentication error: {userError.message}</p>
-        <button
-          onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Retry
-        </button>
-      </div>
-    );
-  }
-
-  // Show auth required if no user
-  if (!user || !userId) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[70vh]">
-        <AlertCircle className="w-12 h-12 text-blue-500 mb-4" />
-        <p className="text-lg">Please log in to view your progress.</p>
-        <Link href="/login" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-          Go to Login
-        </Link>
-      </div>
-    );
-  }
-
-  console.log("✅ Dashboard rendering for authenticated user:", { id: userId, username: user.username });
-
+  // 🟢 All hooks above this line!
   // Stable version of showBadgeNotification to prevent dependency issues
   const stableShowBadgeNotification = useCallback((badge: Badge) => {
     showBadgeNotification(badge);
-  }, []);
+  }, [showBadgeNotification]);
 
   // Memoized badge data fetcher
   const fetchBadgeData = useCallback(async (skipLogging = false) => {
@@ -240,7 +197,6 @@ export default function Dashboard() {
           headers['x-user-id'] = userId;
         }
 
-
         // Fetch all data in parallel
         const [
           progressResponse,
@@ -327,7 +283,7 @@ export default function Dashboard() {
     }
 
     fetchDashboardData()
-  }, [userId, toast]) // Only depend on userId, not the functions
+  }, [userId, toast, stableShowBadgeNotification, fetchBadgeData, triggerBadgeCheck]) // Always include stableShowBadgeNotification and fetchBadgeData if used inside
 
   // Separate effect for the delayed badge check - runs only after initial load
   useEffect(() => {
@@ -341,13 +297,51 @@ export default function Dashboard() {
     }, 3000);
 
     return () => clearTimeout(timeoutId);
-  }, [initialDataLoaded.current, isLoading, userId]);
+  }, [initialDataLoaded.current, isLoading, userId, triggerBadgeCheck]);
 
   // Reset hasInitialized when user changes
   useEffect(() => {
     hasInitialized.current = false;
     initialDataLoaded.current = false;
   }, [userId]);
+
+  // 🟢 Now only conditional rendering and logic below
+
+  if (userLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+        <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
+        <p className="text-lg">Loading authentication...</p>
+      </div>
+    );
+  }
+
+  if (userError) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+        <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+        <p className="text-lg text-red-600 dark:text-red-400">Authentication error: {userError.message}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  if (!user || !userId) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+        <AlertCircle className="w-12 h-12 text-blue-500 mb-4" />
+        <p className="text-lg">Please log in to view your progress.</p>
+        <Link href="/login" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          Go to Login
+        </Link>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

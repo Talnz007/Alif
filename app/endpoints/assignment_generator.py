@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response, Request
 from pydantic import BaseModel
 from typing import List, Optional
 from google.genai import types  # Correct import pattern that works
@@ -11,6 +11,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from io import BytesIO
 import re  # Added for filename sanitization
+from app.endpoints.auth import log_user_activity
 
 router = APIRouter(prefix="/assignment", tags=["Assignment Generator"])
 
@@ -72,7 +73,7 @@ def generate_pdf(assignment_type, topic, tasks):
 
 # --- Endpoint ---
 @router.post("/generate", response_model=AssignmentResponse, responses={200: {"content": {"application/json": {}, "application/pdf": {}}}})
-def generate_assignment(request: AssignmentRequest):
+async def generate_assignment(request: AssignmentRequest, fastapi_request: Request):
     """
     Generate a structured assignment using Google Gemini.
     Can return JSON or PDF based on output_format.
@@ -81,7 +82,6 @@ def generate_assignment(request: AssignmentRequest):
     if len(topic) < 10:
         topic = request.text[:50].strip() + "..."
 
-    # Build a prompt that instructs Gemini to return ONLY valid JSON
     prompt = f"""
 Create a structured {request.assignment_type} assignment with {request.num_tasks} tasks at {request.difficulty} difficulty level based on the text below.
 For each task, return an object with the keys: "title", "description", "reference", and "solution".
@@ -90,7 +90,6 @@ Return the output strictly as a JSON array with no extra text or code fences.
 Text: {request.text}
 """
 
-    # Create a config object - using the same pattern as quiz_generator.py
     config = types.GenerateContentConfig(
         system_instruction=(
             "You are an expert educator. Return only valid JSON (no triple backticks). "
@@ -105,7 +104,6 @@ Text: {request.text}
         seed=42
     )
 
-    # Call Gemini
     try:
         llm_response = call_gemini(prompt=prompt, config=config)
         logger.info(f"Raw Gemini response (Assignment): {llm_response}")
@@ -113,7 +111,6 @@ Text: {request.text}
         logger.exception(f"Error calling Gemini for assignment: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to generate assignment data: {str(e)}")
 
-    # Clean up potential code fences
     cleaned_output = (
         llm_response
         .replace("```json", "")
@@ -121,7 +118,6 @@ Text: {request.text}
         .strip()
     )
 
-    # Attempt to parse JSON
     try:
         tasks_data = json.loads(cleaned_output)
     except json.JSONDecodeError as parse_error:
@@ -135,16 +131,13 @@ Text: {request.text}
                 "solution": "Review the provided text to craft a summary."
             })
 
-    # Ensure tasks_data is a list
     if not isinstance(tasks_data, list):
         tasks_data = [tasks_data] if tasks_data else []
 
-    # Convert to Pydantic models
     try:
         tasks = [Task(**t) for t in tasks_data]
     except Exception as model_error:
         logger.error(f"Error converting assignment data to models: {model_error}")
-        # Create fallback tasks if conversion fails
         tasks = []
         for i, t_data in enumerate(tasks_data):
             try:
@@ -157,7 +150,24 @@ Text: {request.text}
                     solution="N/A"
                 ))
 
-    # Handle output format
+    # --- ACTIVITY LOGGING ---
+    user_id = fastapi_request.headers.get("x-user-id")
+    if user_id:
+        try:
+            await log_user_activity(
+                user_id,
+                "assignment_generated",
+                {
+                    "assignment_type": request.assignment_type,
+                    "num_tasks": len(tasks),
+                    "topic": topic,
+                    "source": "generator"
+                }
+            )
+        except Exception as log_error:
+            logger.error(f"Failed to log assignment generation activity: {log_error}")
+
+    # PDF/JSON logic unchanged
     if request.output_format == "pdf":
         try:
             pdf_buffer = generate_pdf(request.assignment_type, topic, tasks)
@@ -171,7 +181,6 @@ Text: {request.text}
             logger.exception(f"Error generating PDF: {pdf_error}")
             logger.info("Falling back to JSON response due to PDF generation error")
 
-    # Default to JSON response
     return AssignmentResponse(
         assignment_type=request.assignment_type,
         tasks=tasks

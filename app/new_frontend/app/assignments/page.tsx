@@ -19,12 +19,13 @@ export default function AssignmentsPage() {
 
   // Handle URL parameter for opening specific modals
   useEffect(() => {
-    if (searchParams.get('tool') === 'solver') {
-      setSolverModalOpen(true)
-    } else if (searchParams.get('tool') === 'generator') {
-      setGeneratorModalOpen(true)
-    }
-  }, [searchParams])
+  if (!searchParams) return;
+  if (searchParams.get('tool') === 'solver') {
+    setSolverModalOpen(true)
+  } else if (searchParams.get('tool') === 'generator') {
+    setGeneratorModalOpen(true)
+  }
+}, [searchParams])
 
   const openTool = (tool: 'generator' | 'solver') => {
     if (tool === 'generator') {

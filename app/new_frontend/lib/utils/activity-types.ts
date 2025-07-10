@@ -6,7 +6,7 @@
 export enum ActivityType {
   LOGIN = "login",
   LOGOUT = "logout",
-  ASSIGNMENT_STARTED = "assignment_started",
+  ASSIGNMENT_STARTED = "assignment_generated",
   ASSIGNMENT_COMPLETED = "assignment_completed",
   QUIZ_STARTED = "quiz_started",
   QUIZ_COMPLETED = "quiz_completed",

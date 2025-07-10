@@ -237,6 +237,7 @@ export default function QuizGenerator({ onClose }: QuizGeneratorProps) {
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(payload),
       });
+      await fetch(`/api/users/${userId}/streak`, { method: "POST" });
     } catch (err) {
       console.error("Failed to log quiz completion:", err);
     }

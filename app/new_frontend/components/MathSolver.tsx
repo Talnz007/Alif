@@ -201,6 +201,9 @@ export default function MathSolver({ onClose }: { onClose?: () => void }) {
               }
             }),
           });
+          await fetch("/api/users/" + userId + "/streak", {
+            method: "POST"
+          });
         }} catch (logError) {
         console.error("Failed to log activity:", logError);
       }
