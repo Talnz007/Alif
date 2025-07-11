@@ -48,11 +48,11 @@ export default function useProfile() {
     const fetchProfile = async () => {
       try {
         // 1. Fetch user info
-        const { data: userData, error: userError } = await supabase
-          .from('users')
-          .select('id, username, email, created_at, total_points')
-          .eq('id', user.id)
-          .single();
+        const {data: userData, error: userError} = await supabase
+            .from('users')
+            .select('id, username, email, created_at, total_points, image_url')
+            .eq('id', user.id)
+            .single();
         if (userError) throw userError;
 
         // 2. Fetch streak

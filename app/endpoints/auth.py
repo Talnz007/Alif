@@ -72,7 +72,7 @@ async def register(user_data: UserCreate) -> Any:
         # Create access token
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": normalized_username}, expires_delta=access_token_expires
+            data={"sub": normalized_username, "custom_user_id": str(result.data[0]['id'])}, expires_delta=access_token_expires
         )
 
         # Log activity
@@ -93,7 +93,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         # Normalize username to lowercase for case-insensitive login
         normalized_username = form_data.username.lower()
         print(f"Received username: {form_data.username} (normalized to {normalized_username})")
-        print(f"Received password: {form_data.password}")
+        print(f"Received password: Sikeeee That's the wrong number!")  # Do not log passwords
 
         # Try case-insensitive search first using ilike
         user_result = supabase_db.table('users').select("*").ilike("username", normalized_username).execute()
@@ -129,7 +129,8 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         # Create access token using the normalized username
         access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = create_access_token(
-            data={"sub": user["username"]}, expires_delta=access_token_expires
+            data={"sub": user["username"], "custom_user_id": str(user["id"])},
+            expires_delta=access_token_expires
         )
         print(f"Generated access token: {access_token}")
 

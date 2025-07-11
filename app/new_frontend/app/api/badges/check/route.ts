@@ -81,7 +81,8 @@ export async function POST(request: NextRequest) {
 async function checkBadgesBackend(userId: string): Promise<BackendCheckResult> {
   try {
     console.log(`Attempting backend badge check for user ${userId}`);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    if (!apiUrl.startsWith('http')) apiUrl = 'http://' + apiUrl;
     const response = await fetch(`${apiUrl}/api/v1/check-badges`, {
       method: 'POST',
       headers: {
@@ -322,7 +323,7 @@ async function checkLoginStreakBadges(supabase: SupabaseClient, userId: string, 
     // Get login activities ordered by date
     const { data: loginActivities, error } = await supabase
       .from('user_activities')
-      .select('created_at')
+      .select('timestamp')
       .eq('user_id', userId)
       .eq('activity_type', 'login')
       .order('created_at', { ascending: true });
@@ -334,7 +335,7 @@ async function checkLoginStreakBadges(supabase: SupabaseClient, userId: string, 
 
     // Calculate consecutive days
     const consecutiveDays = calculateConsecutiveDays(loginActivities.map(a =>
-      new Date(a.created_at)
+      new Date(a.timestamp)
     ));
 
     console.log(`User ${userId} has logged in for ${consecutiveDays} consecutive days`);
@@ -373,7 +374,7 @@ async function checkStudyStreakBadges(supabase: SupabaseClient, userId: string, 
     // Get study session activities ordered by date
     const { data: studyActivities, error } = await supabase
       .from('user_activities')
-      .select('created_at')
+      .select('timestamp')
       .eq('user_id', userId)
       .in('activity_type', ['study_session_start', 'study_session_end'])
       .order('created_at', { ascending: true });
@@ -384,7 +385,7 @@ async function checkStudyStreakBadges(supabase: SupabaseClient, userId: string, 
     }
 
     // Calculate study streaks (days with study sessions)
-    const studyDays = getUniqueDays(studyActivities.map(a => new Date(a.created_at)));
+    const studyDays = getUniqueDays(studyActivities.map(a => new Date(a.timestamp)));
     const streakLength = calculateLongestStreak(studyDays);
 
     console.log(`User ${userId} has a study streak of ${streakLength} days`);

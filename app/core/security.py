@@ -47,15 +47,14 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 # Function to create an access token for a user
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
-
-    # Set expiration time
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)  # Default expiration of 15 minutes
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
 
-    to_encode.update({"exp": expire})  # Add expiration time to the token
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)  # Encode the JWT
+    # FIX: Convert to UNIX timestamp
+    to_encode.update({"exp": int(expire.timestamp())})
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
 
