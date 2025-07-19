@@ -4,77 +4,68 @@ import { supabase } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
-    // Get the user ID from headers
     const rawUserId = request.headers.get('x-user-id');
-
     if (!rawUserId) {
-      return NextResponse.json(
-        { error: 'User ID is required in x-user-id header' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'User ID is required in x-user-id header' }, { status: 400 });
     }
 
     console.log(`Assignment stats raw user ID: ${rawUserId}`);
-
-    // Ensure it's a valid UUID - IMPORTANT: await the result
     const userId = await ensureUuid(rawUserId);
     console.log(`Assignment stats resolved user ID: ${userId}`);
 
-    // Get completed assignments
-    const { data: assignments, error: assignmentsError } = await supabase
+    const { data: quizActivities, error: quizError } = await supabase
       .from('user_activities')
-      .select('id, metadata, timestamp')
+      .select('id, timestamp, metadata')
       .eq('user_id', userId)
-      .eq('activity_type', 'assignment_completed')
+      .eq('activity_type', 'quiz_completed')
       .order('timestamp', { ascending: false });
 
-    if (assignmentsError) {
-      console.error('Error fetching assignment data:', assignmentsError);
-      throw assignmentsError;
+    if (quizError) {
+      console.error('Error fetching quiz data:', quizError);
+      throw quizError;
     }
 
-    // Calculate stats
-    const totalCompleted = assignments?.length || 0;
-
-    // Calculate average score
+    const totalCompleted = quizActivities?.length || 0;
+    let totalCorrect = 0;
+    let totalQuestions = 0;
     let averageScore = 0;
-    let scoreCount = 0;
 
-    if (assignments && assignments.length > 0) {
-      assignments.forEach(assignment => {
-        if (assignment.metadata?.score) {
-          averageScore += parseInt(assignment.metadata.score);
-          scoreCount++;
+    if (quizActivities && quizActivities.length > 0) {
+      quizActivities.forEach(activity => {
+        const metadata = typeof activity.metadata === 'string' ? JSON.parse(activity.metadata) : activity.metadata;
+        if (metadata?.correct_answers && metadata?.total_questions) {
+          totalCorrect += metadata.correct_answers;
+          totalQuestions += metadata.total_questions;
         }
       });
-
-      if (scoreCount > 0) {
-        averageScore = Math.round(averageScore / scoreCount);
-      }
+      averageScore = totalQuestions > 0 ? Math.round((totalCorrect / totalQuestions) * 100) : 0;
     }
 
-    // Get recent assignments (last 3)
-    const recentAssignments = assignments && assignments.length > 0
-      ? assignments.slice(0, 3).map(assignment => ({
-          id: assignment.id,
-          title: assignment.metadata?.title || 'Assignment',
-          score: parseInt(assignment.metadata?.score) || 0,
-          date: assignment.timestamp
-        }))
+    const recentQuizzes = quizActivities && quizActivities.length > 0
+      ? quizActivities.slice(0, 3).map(activity => {
+          const metadata = typeof activity.metadata === 'string' ? JSON.parse(activity.metadata) : activity.metadata;
+          return {
+            id: activity.id,
+            title: JSON.stringify(metadata), // Store metadata as string for parsing in component
+            score: metadata?.correct_answers || 0,
+            date: activity.timestamp
+          };
+        })
       : [];
 
     return NextResponse.json({
       totalCompleted,
       averageScore,
-      currentStreak: 0, // Mock value since we don't have assignment_streak
-      recentAssignments
+      currentStreak: 0, // Placeholder
+      recentQuizzes
     });
-
   } catch (error) {
     console.error('Error fetching assignment stats:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch assignment statistics' },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      totalCompleted: 0,
+      averageScore: 0,
+      currentStreak: 0,
+      recentQuizzes: []
+    });
   }
 }

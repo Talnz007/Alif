@@ -15,7 +15,8 @@ export const BACKEND_ACTIVITY_TYPES = {
   MATH_PROBLEM_SOLVED: "math_problem_solved",
   QUIZ_GENERATED: "quiz_generated",
   QUIZ_COMPLETED: "quiz_completed",
-  FLASHCARDS_GENERATED: "flashcards_generated"
+  FLASHCARDS_GENERATED: "flashcards_generated",
+  CHAT_MESSAGE_SENT: "chat_message_sent" // New mapping
 };
 
 /**

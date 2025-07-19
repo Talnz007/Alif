@@ -1,13 +1,11 @@
-// Progress and achievements API service
+import { useAuth } from '@/contexts/auth-context';
 
 interface ProgressData {
   overallProgress: number;
   studyStreak: number;
   timeSpentHours: number;
-  topSubjects: {
-    name: string;
-    progress: number;
-  }[];
+  topSubjects: { name: string; progress: number }[];
+  assignmentCount?: number;
 }
 
 interface StreakData {
@@ -19,7 +17,6 @@ interface StreakData {
   nextMilestone: number;
 }
 
-// Modified to match your existing badge structure
 interface Badge {
   id: string;
   name: string;
@@ -42,7 +39,13 @@ interface LeaderboardUser {
 
 export async function getUserProgress(userId: string): Promise<ProgressData> {
   try {
-    const response = await fetch(`/api/users/${userId}/progress`);
+    const { token } = useAuth();
+    const response = await fetch(`/api/users/${userId}/progress`, {
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+        'x-user-id': userId
+      }
+    });
     if (!response.ok) throw new Error('Failed to fetch progress data');
     return response.json();
   } catch (error) {
@@ -55,14 +58,21 @@ export async function getUserProgress(userId: string): Promise<ProgressData> {
         { name: 'Mathematics', progress: 85 },
         { name: 'Physics', progress: 78 },
         { name: 'Computer Science', progress: 92 }
-      ]
+      ],
+      assignmentCount: 0
     };
   }
 }
 
 export async function getUserStreak(userId: string): Promise<StreakData> {
   try {
-    const response = await fetch(`/api/users/${userId}/streak`);
+    const { token } = useAuth();
+    const response = await fetch(`/api/users/${userId}/streak`, {
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+        'x-user-id': userId
+      }
+    });
     if (!response.ok) throw new Error('Failed to fetch streak data');
     return response.json();
   } catch (error) {
@@ -78,11 +88,15 @@ export async function getUserStreak(userId: string): Promise<StreakData> {
   }
 }
 
-// Updated to work with your existing badge structure
 export async function getUserBadges(userId: string, showAll: boolean = false): Promise<Badge[]> {
   try {
-    const url = `/api/badges?userId=${userId}${showAll ? '&showAll=true' : ''}`;
-    const response = await fetch(url);
+    const { token } = useAuth();
+    const response = await fetch(`/api/badges?userId=${userId}${showAll ? '&showAll=true' : ''}`, {
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+        'x-user-id': userId
+      }
+    });
     if (!response.ok) throw new Error('Failed to fetch badges');
     const data = await response.json();
     console.log(`Fetched ${data.length} badges for user ${userId}`);
@@ -93,19 +107,18 @@ export async function getUserBadges(userId: string, showAll: boolean = false): P
   }
 }
 
-export async function checkAndAwardBadges(userId: string, activityType: string, metadata: any = {}) {
+export async function checkAndAwardBadges(userId: string, activityType: string, metadata: any = {}): Promise<any> {
   try {
+    const { token } = useAuth();
     const response = await fetch(`/api/users/${userId}/badges/check`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        'x-user-id': userId
       },
-      body: JSON.stringify({
-        activityType,
-        metadata
-      })
+      body: JSON.stringify({ activityType, metadata })
     });
-
     if (!response.ok) throw new Error('Failed to check badges');
     return response.json();
   } catch (error) {
@@ -116,7 +129,13 @@ export async function checkAndAwardBadges(userId: string, activityType: string, 
 
 export async function getRecentBadges(userId: string, limit: number = 3): Promise<Badge[]> {
   try {
-    const response = await fetch(`/api/badges?userId=${userId}&recent=true&limit=${limit}`);
+    const { token } = useAuth();
+    const response = await fetch(`/api/badges?userId=${userId}&recent=true&limit=${limit}`, {
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+        'x-user-id': userId
+      }
+    });
     if (!response.ok) throw new Error('Failed to fetch recent badges');
     return response.json();
   } catch (error) {
@@ -125,9 +144,15 @@ export async function getRecentBadges(userId: string, limit: number = 3): Promis
   }
 }
 
-export async function getLeaderboard(type: 'global' | 'local' | 'friends'): Promise<LeaderboardUser[]> {
+export async function getLeaderboard(userId: string,type: 'global' | 'local' | 'friends'): Promise<LeaderboardUser[]> {
   try {
-    const response = await fetch(`/api/leaderboard?type=${type}`);
+    const { token } = useAuth();
+    const response = await fetch(`/api/leaderboard?type=${type}`, {
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+        'x-user-id': userId // Add user context if needed
+      }
+    });
     if (!response.ok) throw new Error('Failed to fetch leaderboard');
     return response.json();
   } catch (error) {
@@ -144,10 +169,13 @@ export async function getLeaderboard(type: 'global' | 'local' | 'friends'): Prom
 
 export async function logActivity(userId: string, activityType: string): Promise<void> {
   try {
+    const { token } = useAuth();
     await fetch('/api/activities/log', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
+        'x-user-id': userId
       },
       body: JSON.stringify({
         userId,

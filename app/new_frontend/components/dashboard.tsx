@@ -6,22 +6,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import PerformanceOverview from "@/components/performance-overview"
 import Leaderboard from "@/components/leaderboard"
 import StreakTracker from "@/components/streak/streak-tracker"
-import AssignmentStats from "@/components/assignment-stats"
+import QuizStats from "@/components/quiz-stats"
 import { useToast } from "@/components/ui/use-toast"
 import { Award, BookOpen, GraduationCap, Loader2, Trophy, AlertCircle } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import Link from "next/link"
 import { useBadgeNotification } from "@/components/ui/badge-notification"
 import { useUser } from "@/hooks/use-user"
+import RecommendationsFetcher from "@/components/dashboard/RecommendationsFetcher"
 
 export interface UserProgressData {
   overallProgress: number
   studyStreak: number
   timeSpentHours: number
-  topSubjects: {
-    name: string
-    progress: number
-  }[]
+  topSubjects: { name: string; progress: number }[]
   assignmentCount: number
 }
 
@@ -38,11 +36,12 @@ export interface AssignmentData {
   totalCompleted: number
   averageScore: number
   currentStreak: number
-  recentAssignments: {
+  recentQuizzes: {
     id: string
     title: string
     score: number
     date: string
+    metadata?: string | object
   }[]
 }
 
@@ -57,9 +56,8 @@ interface Badge {
 }
 
 export default function Dashboard() {
-  // 🟢 ALL HOOKS AT THE TOP (before any return)
-  const { user, loading: userLoading, error: userError } = useUser();
-  const userId = user?.id || null;
+  const { user, loading: userLoading, error: userError } = useUser()
+  const userId = user?.id || null
 
   const [isLoading, setIsLoading] = useState(true)
   const [progressData, setProgressData] = useState<UserProgressData | null>(null)
@@ -75,129 +73,78 @@ export default function Dashboard() {
   const badgeCheckInProgress = useRef(false)
   const initialDataLoaded = useRef(false)
 
-  // 🟢 All hooks above this line!
-  // Stable version of showBadgeNotification to prevent dependency issues
   const stableShowBadgeNotification = useCallback((badge: Badge) => {
-    showBadgeNotification(badge);
-  }, [showBadgeNotification]);
+    showBadgeNotification(badge)
+  }, [showBadgeNotification])
 
-  // Memoized badge data fetcher
   const fetchBadgeData = useCallback(async (skipLogging = false) => {
-    if (!userId) return;
-
+    if (!userId) return
     try {
-      if (!skipLogging) {
-        console.log('🔄 Fetching badge data for user:', userId);
-      }
-
+      if (!skipLogging) console.log('🔄 Fetching badge data for user:', userId)
+      const headers = { 'Content-Type': 'application/json', 'x-user-id': userId }
       const [earnedBadgesResponse, allBadgesResponse] = await Promise.all([
-        fetch(`/api/badges?userId=${userId}`),
-        fetch(`/api/badges?userId=${userId}&showAll=true`)
-      ]);
-
+        fetch(`/api/badges?userId=${userId}`, { headers }),
+        fetch(`/api/badges?userId=${userId}&showAll=true`, { headers })
+      ])
       if (earnedBadgesResponse.ok && allBadgesResponse.ok) {
-        const earnedBadges = await earnedBadgesResponse.json();
-        const allBadges = await allBadgesResponse.json();
-
-        setBadgeCount({
-          earned: earnedBadges.length,
-          total: allBadges.length
-        });
-
-        // Get recent badges (last 3 earned)
+        const earnedBadges = await earnedBadgesResponse.json()
+        const allBadges = await allBadgesResponse.json()
+        setBadgeCount({ earned: earnedBadges.length, total: allBadges.length })
         const sortedEarnedBadges = earnedBadges
           .filter((badge: Badge) => badge.earned_at)
-          .sort((a: Badge, b: Badge) =>
-            new Date(b.earned_at!).getTime() - new Date(a.earned_at!).getTime()
-          )
-          .slice(0, 3);
-
-        setRecentBadges(sortedEarnedBadges);
+          .sort((a: Badge, b: Badge) => new Date(b.earned_at!).getTime() - new Date(a.earned_at!).getTime())
+          .slice(0, 3)
+        setRecentBadges(sortedEarnedBadges)
       }
     } catch (error) {
-      console.error('❌ Error fetching badge data:', error);
+      console.error('❌ Error fetching badge data:', error)
     }
-  }, [userId]);
+  }, [userId])
 
-  // Memoized badge check function with proper guards
   const triggerBadgeCheck = useCallback(async () => {
-    if (!userId) return;
-
-    // Prevent multiple simultaneous badge checks
+    if (!userId) return
     if (badgeCheckInProgress.current) {
-      console.log('🔄 Badge check already in progress, skipping...');
-      return;
+      console.log('🔄 Badge check already in progress, skipping...')
+      return
     }
-
-    // Don't run badge check until initial data is loaded
     if (!initialDataLoaded.current) {
-      console.log('⏸️ Skipping badge check - initial data not loaded yet');
-      return;
+      console.log('⏸️ Skipping badge check - initial data not loaded yet')
+      return
     }
-
     try {
-      badgeCheckInProgress.current = true;
-      console.log('🎯 Triggering badge check for user:', userId);
-
+      badgeCheckInProgress.current = true
+      console.log('🎯 Triggering badge check for user:', userId)
       const response = await fetch(`/api/users/${userId}/badges/check`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          activityType: 'dashboard_visit',
-          metadata: { timestamp: new Date().toISOString() }
-        })
-      });
-
+        headers: { 'Content-Type': 'application/json', 'x-user-id': userId },
+        body: JSON.stringify({ activityType: 'dashboard_visit', metadata: { timestamp: new Date().toISOString() } })
+      })
       if (response.ok) {
-        const result = await response.json();
-        console.log('🏆 Badge check result:', result);
-
+        const result = await response.json()
+        console.log('🏆 Badge check result:', result)
         if (result.newBadges && result.newBadges.length > 0) {
-          // Refresh badge data to show new badges (skip logging to avoid spam)
-          await fetchBadgeData(true);
-
-          // Show notification for new badges
+          await fetchBadgeData(true)
           result.newBadges.forEach((badge: Badge, index: number) => {
-            setTimeout(() => {
-              stableShowBadgeNotification(badge);
-            }, index * 2000); // Stagger notifications
-          });
+            setTimeout(() => stableShowBadgeNotification(badge), index * 2000)
+          })
         }
       }
     } catch (error) {
-      console.error('❌ Error checking badges:', error);
+      console.error('❌ Error checking badges:', error)
     } finally {
-      badgeCheckInProgress.current = false;
+      badgeCheckInProgress.current = false
     }
-  }, [userId, fetchBadgeData, stableShowBadgeNotification]);
+  }, [userId, fetchBadgeData, stableShowBadgeNotification])
 
-  // Main initialization effect - runs only once per user
   useEffect(() => {
-    if (hasInitialized.current || !userId) {
-      return;
-    }
-
-    hasInitialized.current = true;
-
+    if (hasInitialized.current || !userId) return
+    hasInitialized.current = true
     async function fetchDashboardData() {
       setIsLoading(true)
       setError(null)
-
       try {
         console.log('🔄 Fetching dashboard data for user:', userId)
-
-        // Prepare headers
-        const headers: Record<string, string> = {
-        'Content-Type': 'application/json'
-      };
-        // Only add user ID header if it exists
-        if (userId) {
-          headers['x-user-id'] = userId;
-        }
-
-        // Fetch all data in parallel
+        const headers: Record<string, string> = { 'Content-Type': 'application/json', 'x-user-id': userId }
         const [
           progressResponse,
           streakResponse,
@@ -207,105 +154,55 @@ export default function Dashboard() {
         ] = await Promise.all([
           fetch(`/api/users/${userId}/progress`, { headers }),
           fetch(`/api/users/${userId}/streak`, { headers }),
-          fetch(`/api/assignments/stats`, { headers }),
+          fetch(`/api/users/${userId}/stats`, { headers }), // Use correct endpoint
           fetch(`/api/badges?userId=${userId}`, { headers }),
           fetch(`/api/badges?userId=${userId}&showAll=true`, { headers })
         ])
-
-        // Check for API errors
         const responses = [progressResponse, streakResponse, assignmentResponse, earnedBadgesResponse, allBadgesResponse]
         const failedResponses = responses.filter(r => !r.ok)
-
-        if (failedResponses.length > 0) {
-          console.error('❌ Some API calls failed:', failedResponses.map(r => r.url))
-        }
-
+        if (failedResponses.length > 0) console.error('❌ Some API calls failed:', failedResponses.map(r => r.url))
         const progress = progressResponse.ok ? await progressResponse.json() : null
         const streak = streakResponse.ok ? await streakResponse.json() : null
         const assignments = assignmentResponse.ok ? await assignmentResponse.json() : null
         const earnedBadges = earnedBadgesResponse.ok ? await earnedBadgesResponse.json() : []
         const allBadges = allBadgesResponse.ok ? await allBadgesResponse.json() : []
-
-        console.log('📊 Dashboard data loaded:', {
-          userId,
-          progress: !!progress,
-          streak: !!streak,
-          assignments: !!assignments,
-          earnedBadges: earnedBadges.length,
-          totalBadges: allBadges.length
-        })
-
+        console.log('📊 Dashboard data loaded:', { userId, progress: !!progress, streak: !!streak, assignments: !!assignments, earnedBadges: earnedBadges.length, totalBadges: allBadges.length })
         setProgressData(progress)
         setStreakData(streak)
         setAssignmentData(assignments)
-
-        // Set badge counts correctly
-        setBadgeCount({
-          earned: earnedBadges.length,
-          total: allBadges.length
-        })
-
-        // Get recent badges (last 3 earned)
+        setBadgeCount({ earned: earnedBadges.length, total: allBadges.length })
         const sortedEarnedBadges = earnedBadges
           .filter((badge: Badge) => badge.earned_at)
-          .sort((a: Badge, b: Badge) =>
-            new Date(b.earned_at!).getTime() - new Date(a.earned_at!).getTime()
-          )
+          .sort((a: Badge, b: Badge) => new Date(b.earned_at!).getTime() - new Date(a.earned_at!).getTime())
           .slice(0, 3)
-
         setRecentBadges(sortedEarnedBadges)
-
-        // Mark initial data as loaded
-        initialDataLoaded.current = true;
-
-        // Show notification for newly earned badges (if any)
+        initialDataLoaded.current = true
         if (sortedEarnedBadges.length > 0) {
           const latestBadge = sortedEarnedBadges[0]
-          const badgeEarnedRecently = latestBadge.earned_at &&
-            new Date(latestBadge.earned_at).getTime() > Date.now() - (5 * 60 * 1000) // 5 minutes
-
-          if (badgeEarnedRecently) {
-            stableShowBadgeNotification(latestBadge)
-          }
+          const badgeEarnedRecently = latestBadge.earned_at && new Date(latestBadge.earned_at).getTime() > Date.now() - (5 * 60 * 1000)
+          if (badgeEarnedRecently) stableShowBadgeNotification(latestBadge)
         }
-
       } catch (error) {
         console.error("❌ Error loading dashboard data:", error)
         setError("Failed to load dashboard data. Please try refreshing the page.")
-        toast({
-          title: "Error",
-          description: "Failed to load your progress data. Please try again.",
-          variant: "destructive"
-        })
+        toast({ title: "Error", description: "Failed to load your progress data. Please try again.", variant: "destructive" })
       } finally {
         setIsLoading(false)
       }
     }
-
     fetchDashboardData()
-  }, [userId, toast, stableShowBadgeNotification, fetchBadgeData, triggerBadgeCheck]) // Always include stableShowBadgeNotification and fetchBadgeData if used inside
+  }, [userId, toast, stableShowBadgeNotification, fetchBadgeData, triggerBadgeCheck])
 
-  // Separate effect for the delayed badge check - runs only after initial load
   useEffect(() => {
-    if (!initialDataLoaded.current || isLoading || !userId) {
-      return;
-    }
+    if (!initialDataLoaded.current || isLoading || !userId) return
+    const timeoutId = setTimeout(() => triggerBadgeCheck(), 3000)
+    return () => clearTimeout(timeoutId)
+  }, [initialDataLoaded.current, isLoading, userId, triggerBadgeCheck])
 
-    // Single delayed badge check after everything is loaded
-    const timeoutId = setTimeout(() => {
-      triggerBadgeCheck();
-    }, 3000);
-
-    return () => clearTimeout(timeoutId);
-  }, [initialDataLoaded.current, isLoading, userId, triggerBadgeCheck]);
-
-  // Reset hasInitialized when user changes
   useEffect(() => {
-    hasInitialized.current = false;
-    initialDataLoaded.current = false;
-  }, [userId]);
-
-  // 🟢 Now only conditional rendering and logic below
+    hasInitialized.current = false
+    initialDataLoaded.current = false
+  }, [userId])
 
   if (userLoading) {
     return (
@@ -313,7 +210,7 @@ export default function Dashboard() {
         <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
         <p className="text-lg">Loading authentication...</p>
       </div>
-    );
+    )
   }
 
   if (userError) {
@@ -328,7 +225,7 @@ export default function Dashboard() {
           Retry
         </button>
       </div>
-    );
+    )
   }
 
   if (!user || !userId) {
@@ -340,7 +237,7 @@ export default function Dashboard() {
           Go to Login
         </Link>
       </div>
-    );
+    )
   }
 
   if (isLoading) {
@@ -348,7 +245,6 @@ export default function Dashboard() {
       <div className="flex flex-col items-center justify-center min-h-[70vh]">
         <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
         <p className="text-lg">Loading your progress...</p>
-        <p className="text-sm text-gray-500">User: {user.username} ({userId})</p>
       </div>
     )
   }
@@ -360,9 +256,9 @@ export default function Dashboard() {
         <p className="text-lg text-red-600 dark:text-red-400">{error}</p>
         <button
           onClick={() => {
-            hasInitialized.current = false;
-            initialDataLoaded.current = false;
-            window.location.reload();
+            hasInitialized.current = false
+            initialDataLoaded.current = false
+            window.location.reload()
           }}
           className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
@@ -373,10 +269,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Badge Notification */}
+    <div className="space-y-8 dark:bg-gray-900">
       {BadgeNotificationComponent}
-
       <div>
         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 mb-2">
           Your Learning Progress
@@ -384,10 +278,8 @@ export default function Dashboard() {
         <p className="text-gray-600 dark:text-gray-300">
           Track your performance, achievements, and academic growth
         </p>
-        <p className="text-sm text-gray-500">Welcome back, {user.username}!</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Welcome back, {user.username}!</p>
       </div>
-
-      {/* Quick Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <QuickStatCard
           title="Assignments"
@@ -421,8 +313,9 @@ export default function Dashboard() {
           color="bg-blue-50 dark:bg-blue-900/20"
         />
       </div>
-
-      {/* Recent Badges Section (if any earned) */}
+      <div className="grid grid-cols-1 md:grid-cols-fit gap-6">
+        <RecommendationsFetcher userId={userId} />
+      </div>
       {recentBadges.length > 0 && (
         <Card className="p-6">
           <div className="flex items-center justify-between mb-4">
@@ -430,7 +323,7 @@ export default function Dashboard() {
               <Award className="mr-2 h-5 w-5 text-amber-500" />
               Recent Achievements
             </h3>
-            <Link href="/badges" className="text-blue-600 hover:text-blue-800 text-sm">
+            <Link href="/badges" className="text-blue-600 dark:text-blue-400 hover:text-blue-800 text-sm">
               View all →
             </Link>
           </div>
@@ -442,9 +335,7 @@ export default function Dashboard() {
                     src={badge.image_url || '/badges/default.png'}
                     alt={badge.name}
                     className="w-10 h-10 object-contain"
-                    onError={(e) => {
-                      e.currentTarget.src = '/badges/default.png';
-                    }}
+                    onError={(e) => { e.currentTarget.src = '/badges/default.png' }}
                   />
                 </div>
                 <p className="text-xs font-medium text-gray-700 dark:text-gray-300 max-w-20">
@@ -458,40 +349,20 @@ export default function Dashboard() {
           </div>
         </Card>
       )}
-
-      {/* Badge Check Button for Testing */}
-      <div className="flex justify-center">
-        <button
-          onClick={triggerBadgeCheck}
-          disabled={badgeCheckInProgress.current}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {badgeCheckInProgress.current ? '⏳ Checking...' : '🎯 Check for New Badges'}
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main content - 2/3 width */}
+      <div className="grid grid-cols-1 lg:grid-cols-fit gap-6">
         <div className="lg:col-span-2 space-y-6">
-          {progressData && <PerformanceOverview data={progressData} />}
-
           <Tabs defaultValue="assignments" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="assignments">My Assignments</TabsTrigger>
+              <TabsTrigger value="assignments">Recent Quizzes</TabsTrigger>
               <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
             </TabsList>
             <TabsContent value="assignments">
-              <AssignmentStats data={assignmentData} />
+              <QuizStats userId={userId} />
             </TabsContent>
             <TabsContent value="leaderboard">
               <Leaderboard />
             </TabsContent>
           </Tabs>
-        </div>
-
-        {/* Sidebar - 1/3 width */}
-        <div className="lg:col-span-1">
-          {streakData && <StreakTracker data={streakData} />}
         </div>
       </div>
     </div>

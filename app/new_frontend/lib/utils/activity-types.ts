@@ -18,7 +18,9 @@ export enum ActivityType {
   TEXT_SUMMARIZED = "text_summarized",
   GOAL_SET = "goal_set",
   GOAL_COMPLETED = "goal_completed",
-  QUESTION_ASKED = "question_asked"
+  QUESTION_ASKED = "question_asked",
+  CHAT_MESSAGE_SENT = "chat_message_sent",
+  DASHBOARD_VISIT = "dashboard_visit", // New type
 }
 
 // Additional metadata for activities
@@ -30,5 +32,7 @@ export interface ActivityMetadata {
   subject?: string;
   difficulty?: string;
   title?: string;
+  messageLength?: number;
+  timestamp?: string; // Added for consistency
   [key: string]: any; // Allow additional properties
 }

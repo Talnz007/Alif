@@ -18,8 +18,9 @@ import re
 from app.endpoints.final_pdf import router as pdf_router
 from app.endpoints.auth import router as auth_router
 from app.services.studdy_buddy_service import router as study_router
+from app.endpoints.recommendations import router as recommendations_router
 from app.endpoints.message_buddy import router as message_router
-from app.endpoints import chatbot
+from app.endpoints.chatbot import router as chatbot_router
 from app.endpoints.badge_endpoints import router as badge_router
 from app.endpoints.assignment_generator import router as assignment_generator_router
 from app.endpoints.assignment_solver import router as assignment_solver_router
@@ -105,6 +106,7 @@ app.include_router(pdf_router, prefix=settings.API_V1_STR)
 app.include_router(badge_router, prefix=settings.API_V1_STR)
 app.include_router(text_summarizer, prefix=settings.API_V1_STR)
 app.include_router(study_router, prefix=settings.API_V1_STR)
+app.include_router(recommendations_router, prefix=settings.API_V1_STR)
 app.include_router(message_router, prefix=settings.API_V1_STR)
 app.include_router(document_context_router, prefix=settings.API_V1_STR, tags=["Document Context"])
 app.include_router(assignment_generator_router, prefix=settings.API_V1_STR, tags=["Assignment Generator"])
@@ -113,9 +115,7 @@ app.include_router(file_summarization_router, prefix=settings.API_V1_STR, tags=[
 app.include_router(flashcard_generator_router, prefix=settings.API_V1_STR, tags=["Flashcard Generator"])
 app.include_router(quiz_generator_router, prefix=settings.API_V1_STR, tags=["Quiz Generator"])
 app.include_router(math_solver_router, prefix=settings.API_V1_STR, tags=["Math Solver"])
-
-# Mount chatbot last
-app.mount("/", chatbot.app, name="chatbot")
+app.include_router(chatbot_router, prefix=settings.API_V1_STR, tags=["Chatbot"])
 # --- End Include NEW routers ---
 
 

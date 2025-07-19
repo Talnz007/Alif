@@ -7,17 +7,11 @@ export async function GET(
   { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
-    // Await the params object before accessing properties
     const { userId: rawUserId } = await params;
-
-    // Debug the UUID conversion
     debugUuid(rawUserId);
-
-    // Convert userId to valid UUID format - await the result
     const userId = await ensureUuid(rawUserId);
     const supabase = await supabaseServerClient();
 
-    // Rest of your function remains the same...
     const { data: streakData, error: streakError } = await supabase
       .from('user_streaks')
       .select('current_streak, longest_streak, last_activity_date')
@@ -29,7 +23,6 @@ export async function GET(
     const current = streakData?.current_streak || 0;
     const longest = streakData?.longest_streak || 0;
 
-    // Check if any activity was completed today
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -47,10 +40,8 @@ export async function GET(
 
     const todayCompleted = todayActivities && todayActivities.length > 0;
 
-    // Calculate weekly progress (days active this week / 7)
     const weekStart = new Date(today);
-    weekStart.setDate(weekStart.getDate() - today.getDay()); // Sunday
-
+    weekStart.setDate(weekStart.getDate() - today.getDay());
     const { data: weeklyActivities, error: weeklyError } = await supabase.rpc(
       'get_active_days_in_period',
       {
@@ -65,25 +56,13 @@ export async function GET(
     const activeDaysThisWeek = weeklyActivities || 0;
     const weeklyProgress = Math.round((activeDaysThisWeek / 7) * 100);
 
-    // Determine streak level and next milestone
     let level = "bronze";
     let nextMilestone = 3;
-
-    if (current >= 30) {
-      level = "platinum";
-      nextMilestone = 50;
-    } else if (current >= 14) {
-      level = "gold";
-      nextMilestone = 30;
-    } else if (current >= 7) {
-      level = "silver";
-      nextMilestone = 14;
-    } else if (current >= 3) {
-      level = "bronze";
-      nextMilestone = 7;
-    } else {
-      nextMilestone = 3;
-    }
+    if (current >= 30) { level = "platinum"; nextMilestone = 50; }
+    else if (current >= 14) { level = "gold"; nextMilestone = 30; }
+    else if (current >= 7) { level = "silver"; nextMilestone = 14; }
+    else if (current >= 3) { level = "bronze"; nextMilestone = 7; }
+    else { nextMilestone = 3; }
 
     return NextResponse.json({
       current,
@@ -93,12 +72,8 @@ export async function GET(
       level,
       nextMilestone
     });
-
   } catch (error) {
     console.error('Error fetching streak data:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch streak data' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch streak data' }, { status: 500 });
   }
 }

@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Loader2, FileUp, Copy, FileText } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { UserActivity } from '@/lib/user-activity';
-
+import { useAuth } from '@/contexts/auth-context'; // Import useAuth
 
 interface SummaryGeneratorProps {
   onClose: () => void
@@ -19,6 +19,7 @@ export default function SummaryGenerator({ onClose }: SummaryGeneratorProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const { token } = useAuth(); // Get token
 
   const handleFileButtonClick = () => {
     if (fileInputRef.current) {
@@ -30,9 +31,8 @@ export default function SummaryGenerator({ onClose }: SummaryGeneratorProps) {
     if (event.target.files && event.target.files[0]) {
       const selectedFile = event.target.files[0];
       setFile(selectedFile);
-      
+
       if (selectedFile.type === "text/plain") {
-        // For text files, read directly
         const text = await selectedFile.text();
         setFileText(text);
       } else if (selectedFile.type === "application/pdf") {
@@ -51,47 +51,45 @@ export default function SummaryGenerator({ onClose }: SummaryGeneratorProps) {
 
     setIsLoading(true);
     setError(null);
-    
+
     try {
       if (file.type === "text/plain") {
-        // For text files, send the text directly
         const response = await fetch("http://localhost:8000/api/v1/summarize/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
           },
           body: JSON.stringify({ text: fileText }),
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         setSummary(data.summary);
-        // Log text summarization for Summarization Star and Knowledge Seeker badges
-        await UserActivity.summarizeText(fileText.length || file.size);
-
-
-      } 
-      // For PDFs and other files
-      else {
+        if (token) {
+          await UserActivity.summarizeText(fileText.length || file.size, token);
+        }
+      } else {
         const formData = new FormData();
         formData.append("file", file);
-        
+
         const response = await fetch("http://localhost:8000/api/v1/upload-for-summary/", {
           method: "POST",
           body: formData,
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         setSummary(data.summary);
-        // Log text summarization for Summarization Star and Knowledge Seeker badges
-        await UserActivity.summarizeText(fileText.length || file.size);
+        if (token) {
+          await UserActivity.summarizeText(fileText.length || file.size, token);
+        }
       }
     } catch (error) {
       console.error("Error generating summary:", error);
@@ -112,7 +110,6 @@ export default function SummaryGenerator({ onClose }: SummaryGeneratorProps) {
   return (
     <div className="p-4">
       <div className="space-y-6">
-        {/* File Upload Section */}
         <div className="rounded-lg border p-4">
           <h3 className="text-lg font-medium mb-2">Upload Document</h3>
           <div className="flex flex-col sm:flex-row gap-4">
@@ -124,16 +121,16 @@ export default function SummaryGenerator({ onClose }: SummaryGeneratorProps) {
                 accept=".pdf,.txt,.docx"
                 className="hidden"
               />
-              <Button 
-                onClick={handleFileButtonClick} 
-                variant="outline" 
+              <Button
+                onClick={handleFileButtonClick}
+                variant="outline"
                 className="w-full border-dashed border-2 h-16"
               >
                 <FileUp className="h-5 w-5 mr-2" />
                 Choose File
               </Button>
             </div>
-            
+
             {file && (
               <div className="flex-1 flex items-center bg-muted rounded-lg p-3">
                 <FileText className="h-5 w-5 mr-3 text-blue-500" />
@@ -152,9 +149,9 @@ export default function SummaryGenerator({ onClose }: SummaryGeneratorProps) {
           </div>
         )}
 
-        <Button 
-          onClick={generateSummary} 
-          disabled={!file || isLoading} 
+        <Button
+          onClick={generateSummary}
+          disabled={!file || isLoading}
           className="w-full"
         >
           {isLoading ? (
@@ -166,7 +163,6 @@ export default function SummaryGenerator({ onClose }: SummaryGeneratorProps) {
           )}
         </Button>
 
-        {/* Summary Output */}
         {summary && (
           <div className="rounded-lg border p-4">
             <div className="flex justify-between items-center mb-2">

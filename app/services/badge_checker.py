@@ -5,12 +5,12 @@ from app.core.app_logging import app_logger
 # Mapping between different activity type variations
 ACTIVITY_TYPE_MAPPING = {
     # Login activities
-    "login": ["login", "user_login"],  # Accept both variations
+    "login": ["login", "user_login"],
 
     # Content activities
     "audio_processed": ["audio_processed", "audio_uploaded"],
     "document_analyzed": ["document_analyzed", "document_uploaded"],
-    "text_summarized": ["text_summarized"],  # This one matches already
+    "text_summarized": ["text_summarized"],
 
     # Goal activities
     "goal_created": ["goal_created", "goal_set"],
@@ -30,40 +30,40 @@ ACTIVITY_TYPE_MAPPING = {
 # Complete badge criteria for all 20 badges
 BADGE_CRITERIA = {
     # Login and first-time badges
-    1: {"activity_type": "login", "count": 1, "name": "First Step"},  # First login
-    2: {"activity_type": "login", "consecutive_days": 7, "name": "Daily Learner"},  # 7 consecutive days
-    3: {"activity_type": "login", "consecutive_days": 30, "name": "Consistent Learner"},  # 30 consecutive days
-    12: {"activity_type": "goal_created", "count": 1, "name": "Goal Setter"},  # First study goal
+    1: {"activity_type": "login", "count": 1, "name": "First Step"},
+    2: {"activity_type": "login", "consecutive_days": 7, "name": "Daily Learner"},
+    3: {"activity_type": "login", "consecutive_days": 30, "name": "Consistent Learner"},
+    12: {"activity_type": "goal_created", "count": 1, "name": "Goal Setter"},
 
     # Streak badges
-    4: {"streak": 3, "name": "Streak Starter"},  # 3-day streak
-    5: {"streak": 10, "name": "Streak Master"},  # 10-day streak
-    14: {"streak": 30, "name": "Streak Specialist"},  # 30-day streak
+    4: {"streak": 3, "name": "Streak Starter"},
+    5: {"streak": 10, "name": "Streak Master"},
+    14: {"streak": 30, "name": "Streak Specialist"},
 
     # Content badges - Text
-    6: {"activity_type": "text_summarized", "count": 10, "name": "Summarization Star"},  # 10 summarizations
-    17: {"activity_type": "text_summarized", "count": 20, "name": "Knowledge Seeker"},  # 20 summarizations
+    6: {"activity_type": "text_summarized", "count": 10, "name": "Summarization Star"},
+    17: {"activity_type": "text_summarized", "count": 20, "name": "Knowledge Seeker"},
 
     # Content badges - Audio
-    7: {"activity_type": "audio_processed", "count": 5, "name": "Audio Enthusiast"},  # 5 audio files
-    18: {"activity_type": "audio_processed", "count": 15, "name": "Audio Analyzer"},  # 15 audio files
+    7: {"activity_type": "audio_processed", "count": 5, "name": "Audio Enthusiast"},
+    18: {"activity_type": "audio_processed", "count": 15, "name": "Audio Analyzer"},
 
     # Content badges - Document
-    8: {"activity_type": "document_analyzed", "count": 10, "name": "Document Guru"},  # 10 documents
-    19: {"activity_type": "document_analyzed", "count": 20, "name": "Document Pro"},  # 20 documents
+    8: {"activity_type": "document_analyzed", "count": 10, "name": "Document Guru"},
+    19: {"activity_type": "document_analyzed", "count": 20, "name": "Document Pro"},
 
     # Achievement badges
-    11: {"activity_type": "question_asked", "count": 20, "name": "Curious Learner"},  # 20 questions
-    13: {"activity_type": "goal_achieved", "count": 1, "name": "Goal Achiever"},  # Achieved study goal
+    11: {"activity_type": "question_asked", "count": 20, "name": "Curious Learner"},
+    13: {"activity_type": "goal_achieved", "count": 1, "name": "Goal Achiever"},
 
     # Leaderboard badges
-    15: {"leaderboard": "entered", "name": "Leaderboard Rookie"},  # First leaderboard entry
-    16: {"leaderboard": "top_10_percent", "name": "Top Performer"},  # Top 10% on leaderboard
+    15: {"leaderboard": "entered", "name": "Leaderboard Rookie"},
+    16: {"leaderboard": "top_10_percent", "name": "Top Performer"},
 
     # Collection badges
-    9: {"badge_count": 5, "name": "Badge Collector"},  # Earned 5 badges
-    10: {"badge_count": 10, "name": "Super Collector"},  # Earned 10 badges
-    20: {"badge_count": 19, "name": "Ultimate Learner"},  # Earned all other badges
+    9: {"badge_count": 5, "name": "Badge Collector"},
+    10: {"badge_count": 10, "name": "Super Collector"},
+    20: {"badge_count": 19, "name": "Ultimate Learner"},
 }
 
 
@@ -94,8 +94,7 @@ class BadgeChecker:
             if "activity_type" in criteria:
                 criteria_type = criteria["activity_type"]
                 # Check if the current activity matches any variation of the criteria type
-                if any(activity_type == variation for variation in
-                       ACTIVITY_TYPE_MAPPING.get(criteria_type, [criteria_type])):
+                if any(activity_type == variation for variation in ACTIVITY_TYPE_MAPPING.get(criteria_type, [criteria_type])):
                     try:
                         # Simple count check
                         if "count" in criteria:
@@ -112,10 +111,8 @@ class BadgeChecker:
 
                         # Consecutive days check for login badges
                         elif "consecutive_days" in criteria:
-                            consecutive_days = await self._check_consecutive_days(user_id, criteria_type,
-                                                                                  criteria["consecutive_days"])
-                            app_logger.info(
-                                f"Badge {badge_id}: found {consecutive_days} consecutive days for {criteria_type}")
+                            consecutive_days = await self._check_consecutive_days(user_id, criteria_type, criteria["consecutive_days"])
+                            app_logger.info(f"Badge {badge_id}: found {consecutive_days} consecutive days for {criteria_type}")
                             if consecutive_days >= criteria["consecutive_days"]:
                                 success = await self.badge_service.award_badge(user_id, badge_id)
                                 if success:
@@ -133,13 +130,11 @@ class BadgeChecker:
 
         # Check leaderboard badges if relevant
         if activity_type == "leaderboard_updated" and metadata.get("position"):
-            await self._check_leaderboard_badges(user_id, current_badge_ids, metadata.get("position"),
-                                                 metadata.get("total_users", 100), awarded_badges)
+            await self._check_leaderboard_badges(user_id, current_badge_ids, metadata.get("position"), metadata.get("total_users", 100), awarded_badges)
 
         # Check badge collection badges after potentially awarding others
         if awarded_badges:
-            await self._check_collection_badges(user_id, current_badge_ids + [b["id"] for b in awarded_badges],
-                                                awarded_badges)
+            await self._check_collection_badges(user_id, current_badge_ids + [b["id"] for b in awarded_badges], awarded_badges)
 
         return awarded_badges
 
@@ -166,8 +161,7 @@ class BadgeChecker:
                 .or_(filter_string) \
                 .execute()
 
-            app_logger.info(
-                f"Counted activities for {activity_type}: {result.count} (variations: {activity_variations})")
+            app_logger.info(f"Counted activities for {activity_type}: {result.count} (variations: {activity_variations})")
             return result.count or 0
 
         except Exception as e:
@@ -200,7 +194,7 @@ class BadgeChecker:
             if not result.data:
                 return 0
 
-            # Group activities by day (rest of the method remains the same)
+            # Group activities by day
             days_active = set()
             for item in result.data:
                 timestamp = item.get("timestamp", "")
@@ -220,7 +214,6 @@ class BadgeChecker:
                 # Parse dates to check if consecutive
                 prev_day = sorted_days[i - 1]
                 curr_day = sorted_days[i]
-
                 from datetime import datetime, timedelta
                 prev_date = datetime.fromisoformat(prev_day)
                 curr_date = datetime.fromisoformat(curr_day)

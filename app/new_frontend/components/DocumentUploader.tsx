@@ -4,13 +4,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, FileText, CheckCircle } from "lucide-react";
 import { UserActivity } from '@/lib/user-activity';
-
+import { useAuth } from '@/contexts/auth-context'; // Import useAuth
 
 export default function DocumentUploader() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [results, setResults] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { token } = useAuth(); // Get token
 
   const handleUpload = async () => {
     if (!file) return;
@@ -30,8 +31,9 @@ export default function DocumentUploader() {
       if (response.ok) {
         const data = await response.json();
         setResults(data.summary || data.content);
-        // Log document processing for Document Guru and Document Pro badges
-        await UserActivity.uploadDocument(file.name, data.pageCount || 1);
+        if (token) {
+          await UserActivity.uploadDocument(file.name, data.pageCount || 1, token);
+        }
       } else {
         setError("Failed to process document");
       }
@@ -40,7 +42,7 @@ export default function DocumentUploader() {
       setError("Error processing document");
     } finally {
       setUploading(false);
-      setFile(null); // Clear file after processing
+      setFile(null);
     }
   };
 

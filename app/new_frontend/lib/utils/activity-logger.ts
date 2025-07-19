@@ -2,6 +2,7 @@
  * Frontend utility for logging user activities through the API
  */
 import { ActivityType, ActivityMetadata } from '@/lib/utils/activity-types';
+import { useAuth } from '@/contexts/auth-context';
 
 /**
  * Log a user activity to the server through the API endpoint
@@ -15,12 +16,14 @@ export async function logActivity(
   metadata: ActivityMetadata = {}
 ): Promise<boolean> {
   try {
+    const { token } = useAuth(); // Get token
     console.log(`Logging activity: ${activityType}`, { userId, metadata });
 
     const response = await fetch('/api/activities/log', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { Authorization: `Bearer ${token}` }),
       },
       body: JSON.stringify({
         userId,

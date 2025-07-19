@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { toast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserActivity } from '@/lib/user-activity';
-
+import { useAuth } from '@/contexts/auth-context'; // Import useAuth
 
 interface AudioSummaryResponse {
   title?: string;
@@ -22,24 +22,21 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
   const [result, setResult] = useState<AudioSummaryResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { token } = useAuth(); // Get token
 
-  // Reset to initial state
   const handleReset = () => {
     setFile(null);
     setResult(null);
     setError(null);
   };
 
-  // Select file for upload
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (!selectedFile) return;
 
-    // Validate file type
     const validTypes = ['audio/mpeg', 'audio/wav', 'audio/mp4', 'audio/ogg', 'audio/aac', 'audio/flac'];
     const validExtensions = ['.mp3', '.wav', '.m4a', '.ogg', '.aac', '.flac', '.aiff'];
 
-    // Check either mime type or extension
     const isValidType = validTypes.some(type => selectedFile.type.includes(type)) ||
       validExtensions.some(ext => selectedFile.name.toLowerCase().endsWith(ext));
 
@@ -48,7 +45,6 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
       return;
     }
 
-    // Validate file size (20MB max)
     if (selectedFile.size > 20 * 1024 * 1024) {
       setError("File size must be less than 20MB");
       return;
@@ -58,7 +54,6 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
     setError(null);
   };
 
-  // Process the audio
   const handleProcess = async () => {
     if (!file) return;
 
@@ -66,11 +61,9 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
     setError(null);
 
     try {
-      // Create form data for API request
       const formData = new FormData();
       formData.append("file", file);
 
-      // Send to backend
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
       const response = await fetch(`${apiBaseUrl}/transcribe?mode=both`, {
         method: "POST",
@@ -89,11 +82,13 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
 
       setResult(responseData.data);
 
-      await UserActivity.uploadAudio(
-        file.name,
-        // Estimate duration if not available in the response
-        responseData.data?.duration || Math.round(file.size / 16000) // rough estimate
-      );
+      if (token) {
+        await UserActivity.uploadAudio(
+          file.name,
+          responseData.data?.duration || Math.round(file.size / 16000),
+          token
+        );
+      }
 
       toast({
         title: "Success!",
@@ -115,7 +110,6 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
 
   return (
     <div className="space-y-8">
-      {/* Intro section */}
       <div className="bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-900/30 dark:to-blue-900/30 rounded-xl p-6 flex items-start space-x-4">
         <div className="bg-cyan-100 dark:bg-cyan-800 rounded-full p-3">
           <Headphones className="h-6 w-6 text-cyan-600 dark:text-cyan-300" />
@@ -130,14 +124,11 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Input section */}
         <div className="space-y-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 min-h-[450px]">
             <h3 className="font-medium text-xl text-gray-900 dark:text-gray-100 mb-6">Upload Audio</h3>
 
-            {/* Hidden file input */}
             <input
               type="file"
               ref={fileInputRef}
@@ -184,7 +175,6 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
                   </button>
                 </div>
 
-                {/* Audio player preview */}
                 <div className="w-full mb-6">
                   <audio controls className="w-full" src={URL.createObjectURL(file)}></audio>
                 </div>
@@ -225,7 +215,6 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
           </div>
         </div>
 
-        {/* Results section */}
         <div className="space-y-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 min-h-[450px]">
             <h3 className="font-medium text-xl text-gray-900 dark:text-gray-100 mb-6">Summary Results</h3>
@@ -254,14 +243,12 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
                   </TabsList>
 
                   <TabsContent value="summary" className="space-y-6">
-                    {/* Title */}
                     {result.title && (
                       <div className="bg-cyan-50 dark:bg-cyan-900/20 p-5 rounded-lg">
                         <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{result.title}</h2>
                       </div>
                     )}
 
-                    {/* Summary paragraph */}
                     {result.summary && (
                       <div className="bg-white dark:bg-gray-900/70 p-5 rounded-lg border border-gray-200 dark:border-gray-700">
                         <h4 className="text-sm uppercase font-medium text-gray-500 dark:text-gray-400 mb-3">
@@ -273,7 +260,6 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
                       </div>
                     )}
 
-                    {/* Bullet points */}
                     {result.bullet_points && result.bullet_points.length > 0 && (
                       <div className="bg-white dark:bg-gray-900/70 p-5 rounded-lg border border-gray-200 dark:border-gray-700">
                         <h4 className="text-sm uppercase font-medium text-gray-500 dark:text-gray-400 mb-3">
@@ -289,7 +275,6 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
                       </div>
                     )}
 
-                    {/* Show placeholder if no summary data */}
                     {!result.title && !result.summary && (!result.bullet_points || result.bullet_points.length === 0) && (
                       <div className="p-5 text-center text-gray-500 dark:text-gray-400">
                         No summary information available. Check the transcript tab.
@@ -330,7 +315,6 @@ export default function AudioUploader({ onClose }: { onClose?: () => void }) {
         </div>
       </div>
 
-      {/* Tips section */}
       <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-6">
         <h4 className="text-base font-medium text-gray-700 dark:text-gray-300 mb-3">
           Tips for Best Results

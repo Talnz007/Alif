@@ -224,21 +224,18 @@ async function checkLoginStreak(userId: string): Promise<void> {
  */
 async function updateStreak(userId: string): Promise<void> {
   try {
-    // Get the current date in UTC
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
-
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Check if user has already completed an activity today
     const { data: todayActivities, error: todayError } = await supabase
       .from('user_activities')
       .select('id')
       .eq('user_id', userId)
       .in('activity_type', ['assignment_completed', 'quiz_completed', 'study_session_end'])
       .gte('timestamp', today.toISOString())
-      .lt('timestamp', tomorrow.toISOString()); // Fixed this line!
+      .lt('timestamp', tomorrow.toISOString());
 
     if (todayError) {
       console.error('Error checking today activities:', todayError);
@@ -247,7 +244,6 @@ async function updateStreak(userId: string): Promise<void> {
 
     const hasTodayActivity = todayActivities && todayActivities.length > 0;
 
-    // Get user's last activity date before today
     const yesterday = new Date(today);
     yesterday.setUTCDate(yesterday.getUTCDate() - 1);
 
@@ -265,7 +261,6 @@ async function updateStreak(userId: string): Promise<void> {
       return;
     }
 
-    // Get current streak data
     const { data: streakData, error: streakError } = await supabase
       .from('user_streaks')
       .select('*')
@@ -276,7 +271,6 @@ async function updateStreak(userId: string): Promise<void> {
       return;
     }
 
-    // Calculate current streak
     let currentStreak = 0;
     let longestStreak = 0;
     let streakId = null;
@@ -288,32 +282,23 @@ async function updateStreak(userId: string): Promise<void> {
     }
 
     if (hasTodayActivity) {
-      // First check if yesterday had activity
       if (lastActivities && lastActivities.length > 0) {
         const lastActivityDate = new Date(lastActivities[0].timestamp);
         lastActivityDate.setUTCHours(0, 0, 0, 0);
-
-        // If last activity was yesterday, increment streak
         if (lastActivityDate.getTime() === yesterday.getTime()) {
           currentStreak++;
         } else {
-          // Reset streak to 1 (today)
           currentStreak = 1;
         }
       } else {
-        // First activity, streak is 1
         currentStreak = 1;
       }
     }
 
-    // Update longest streak if needed
-    if (currentStreak > longestStreak) {
-      longestStreak = currentStreak;
-    }
+    if (currentStreak > longestStreak) longestStreak = currentStreak;
 
-    // Update or insert streak record
     if (streakId) {
-      const { error: updateError } = await supabase
+      await supabase
         .from('user_streaks')
         .update({
           current_streak: currentStreak,
@@ -322,12 +307,8 @@ async function updateStreak(userId: string): Promise<void> {
           updated_at: new Date().toISOString()
         })
         .eq('id', streakId);
-
-      if (updateError) {
-        console.error('Error updating streak:', updateError);
-      }
     } else {
-      const { error: insertError } = await supabase
+      await supabase
         .from('user_streaks')
         .insert({
           user_id: userId,
@@ -335,24 +316,11 @@ async function updateStreak(userId: string): Promise<void> {
           longest_streak: longestStreak,
           last_activity_date: hasTodayActivity ? new Date().toISOString() : null
         });
-
-      if (insertError) {
-        console.error('Error creating streak record:', insertError);
-      }
     }
 
-    // Check for streak badges if streak is valid
-    if (currentStreak >= 3) {
-      await awardBadgeByName(userId, "Streak Starter");
-    }
-
-    if (currentStreak >= 10) {
-      await awardBadgeByName(userId, "Streak Master");
-    }
-
-    if (currentStreak >= 30) {
-      await awardBadgeByName(userId, "Streak Specialist");
-    }
+    if (currentStreak >= 3) await awardBadgeByName(userId, "Streak Starter");
+    if (currentStreak >= 10) await awardBadgeByName(userId, "Streak Master");
+    if (currentStreak >= 30) await awardBadgeByName(userId, "Streak Specialist");
   } catch (error) {
     console.error("Error updating streak:", error);
   }
